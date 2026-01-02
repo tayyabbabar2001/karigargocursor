@@ -34,9 +34,18 @@ export function EarningsHistory({ context }: { context: AppContextType }) {
   const weeklyTotal = weeklyData.reduce((sum, d) => sum + d.amount, 0);
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => context.setScreen('available-jobs')}>
+        <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('available-jobs')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Earnings & History</Text>
@@ -100,7 +109,7 @@ export function EarningsHistory({ context }: { context: AppContextType }) {
         <View style={styles.historyCard}>
           <View style={styles.historyHeader}>
             <Text style={styles.historyTitle}>Job History</Text>
-            <TouchableOpacity>
+            <TouchableOpacity activeOpacity={1}>
               <Text style={styles.viewAll}>View All</Text>
             </TouchableOpacity>
           </View>
@@ -131,7 +140,8 @@ export function EarningsHistory({ context }: { context: AppContextType }) {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.withdrawButton} disabled>
+        <TouchableOpacity activeOpacity={1}
+          style={styles.withdrawButton} disabled>
           <Ionicons name="cash-outline" size={16} color="#9ca3af" />
           <Text style={styles.withdrawText}>Withdraw Earnings (Coming Soon)</Text>
         </TouchableOpacity>
@@ -151,12 +161,13 @@ const styles = StyleSheet.create({
     gap: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+    marginBottom: 16,
   },
   headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
   totalEarnings: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#006600',
     margin: 20,
-    marginTop: 0,
+    marginTop: 8,
     padding: 24,
     borderRadius: 16,
   },
@@ -205,25 +216,31 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  chartTitle: { fontSize: 18, fontWeight: '600', marginBottom: 16 },
+  chartTitle: { fontSize: 18, fontWeight: '600', marginBottom: 12 },
+  chartSpacer: { height: 8 },
   chartContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    height: 128,
-    marginBottom: 16,
+    height: 120,
+    marginBottom: 20,
+    paddingBottom: 8,
+    marginTop: 8,
   },
   chartBar: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'flex-end',
     gap: 8,
+    height: '100%',
   },
   barContainer: {
-    width: '100%',
+    width: '75%',
     height: '100%',
     backgroundColor: '#e5e7eb',
     borderRadius: 4,
     justifyContent: 'flex-end',
+    marginBottom: 4,
   },
   bar: {
     width: '100%',

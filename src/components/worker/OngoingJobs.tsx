@@ -86,7 +86,7 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => context.setScreen('available-jobs')}>
+        <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('available-jobs')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Jobs</Text>
@@ -94,7 +94,8 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
 
       <View style={styles.tabsContainer}>
         <TouchableOpacity
-          style={[styles.tab, activeTab === 'active' && styles.tabActive]}
+          activeOpacity={1}
+style={[styles.tab, activeTab === 'active' && styles.tabActive]}
           onPress={() => setActiveTab('active')}
         >
           <Text style={[styles.tabText, activeTab === 'active' && styles.tabTextActive]}>
@@ -102,7 +103,8 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tab, activeTab === 'completed' && styles.tabActive]}
+          activeOpacity={1}
+style={[styles.tab, activeTab === 'completed' && styles.tabActive]}
           onPress={() => setActiveTab('completed')}
         >
           <Text style={[styles.tabText, activeTab === 'completed' && styles.tabTextActive]}>
@@ -111,7 +113,16 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content} bounces={false} scrollEventThrottle={16}>
+      <ScrollView 
+        style={styles.content} 
+        bounces={false}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        scrollEventThrottle={16}
+        >
         {activeTab === 'active' ? (
           <View style={styles.jobsList}>
             {activeJobs.map((job) => (
@@ -137,12 +148,14 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
                 </View>
 
                 <View style={styles.jobActions}>
-                  <TouchableOpacity style={styles.actionButton}>
+                  <TouchableOpacity activeOpacity={1}
+          style={styles.actionButton}>
                     <Ionicons name="call-outline" size={16} color="#006600" />
                     <Text style={styles.actionText}>Call</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.actionButton}
+                    activeOpacity={1}
+style={styles.actionButton}
                     onPress={() => context.setScreen('worker-messages')}
                   >
                     <Ionicons name="chatbubble-outline" size={16} color="#006600" />
@@ -150,7 +163,8 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
                   </TouchableOpacity>
                   {job.status === 'In Progress' && (
                     <TouchableOpacity
-                      style={styles.doneButton}
+                      activeOpacity={1}
+style={styles.doneButton}
                       onPress={() => handleJobComplete(job.id)}
                     >
                       <Ionicons name="checkmark-circle" size={16} color="#fff" />
@@ -178,9 +192,9 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Ionicons
                           key={i}
-                          name={i < job.rating ? 'star' : 'star-outline'}
+                          name={i < (job.rating || 0) ? 'star' : 'star-outline'}
                           size={16}
-                          color={i < job.rating ? '#ffb800' : '#ddd'}
+                          color={i < (job.rating || 0) ? '#ffb800' : '#ddd'}
                         />
                       ))}
                     </View>

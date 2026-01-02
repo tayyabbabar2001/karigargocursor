@@ -18,10 +18,19 @@ export function WorkerProfileView({ context }: { context: AppContextType }) {
   };
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('bidding')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('bidding')}>
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Worker Profile</Text>
@@ -80,13 +89,15 @@ export function WorkerProfileView({ context }: { context: AppContextType }) {
 
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={[styles.button, styles.messageButton]}
+            activeOpacity={1}
+style={[styles.button, styles.messageButton]}
             onPress={() => context.setScreen('chat')}
           >
             <Text style={styles.messageButtonText}>💬 Message</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, styles.hireButton]}
+            activeOpacity={1}
+style={[styles.button, styles.hireButton]}
             onPress={handleHire}
           >
             <Text style={styles.hireButtonText}>Hire Now</Text>

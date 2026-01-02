@@ -14,11 +14,21 @@ export function LanguageSelection({ context }: { context: AppContextType }) {
   };
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity
+            activeOpacity={1}
             onPress={() => context.setScreen(context.userRole === 'customer' ? 'customer-profile' : 'worker-profile')}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -36,7 +46,8 @@ export function LanguageSelection({ context }: { context: AppContextType }) {
         <View style={styles.languageOptions}>
           {/* English */}
           <TouchableOpacity
-            style={[
+            activeOpacity={1}
+style={[
               styles.languageCard,
               selectedLanguage === 'english' && styles.languageCardSelected,
             ]}
@@ -62,7 +73,8 @@ export function LanguageSelection({ context }: { context: AppContextType }) {
 
           {/* Urdu */}
           <TouchableOpacity
-            style={[
+            activeOpacity={1}
+style={[
               styles.languageCard,
               selectedLanguage === 'urdu' && styles.languageCardSelected,
             ]}
@@ -95,7 +107,8 @@ export function LanguageSelection({ context }: { context: AppContextType }) {
         </View>
 
         {/* Continue Button */}
-        <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+        <TouchableOpacity activeOpacity={1}
+          style={styles.continueButton} onPress={handleContinue}>
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
       </View>

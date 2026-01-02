@@ -13,10 +13,19 @@ export function CustomerProfile({ context }: { context: AppContextType }) {
   };
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profile & Settings</Text>
@@ -39,7 +48,8 @@ export function CustomerProfile({ context }: { context: AppContextType }) {
           <Text style={styles.sectionTitle}>Personal Information</Text>
           
           <TouchableOpacity
-            style={styles.menuItem}
+            activeOpacity={1}
+style={styles.menuItem}
             onPress={() => context.setScreen('personal-info')}
           >
             <View style={styles.menuItemLeft}>
@@ -55,7 +65,8 @@ export function CustomerProfile({ context }: { context: AppContextType }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.menuItem}
+            activeOpacity={1}
+style={styles.menuItem}
             onPress={() => context.setScreen('change-password')}
           >
             <View style={styles.menuItemLeft}>
@@ -88,7 +99,8 @@ export function CustomerProfile({ context }: { context: AppContextType }) {
           </View>
 
           <TouchableOpacity
-            style={styles.menuItem}
+            activeOpacity={1}
+style={styles.menuItem}
             onPress={() => context.setScreen('language-selection')}
           >
             <View style={styles.menuItemLeft}>
@@ -108,7 +120,8 @@ export function CustomerProfile({ context }: { context: AppContextType }) {
           <Text style={styles.sectionTitle}>Support</Text>
           
           <TouchableOpacity
-            style={styles.menuItem}
+            activeOpacity={1}
+style={styles.menuItem}
             onPress={() => context.setScreen('help-support')}
           >
             <View style={styles.menuItemLeft}>
@@ -124,7 +137,8 @@ export function CustomerProfile({ context }: { context: AppContextType }) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <TouchableOpacity activeOpacity={1}
+          style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>🚪 Logout</Text>
         </TouchableOpacity>
       </View>

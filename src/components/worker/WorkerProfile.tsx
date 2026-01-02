@@ -21,11 +21,21 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
   };
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.scrollContent}
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('available-jobs')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('available-jobs')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>My Profile</Text>
@@ -173,7 +183,8 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
                 <Text style={styles.documentSubtitle}>Optional</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.uploadButton}>
+            <TouchableOpacity activeOpacity={1}
+          style={styles.uploadButton}>
               <Text style={styles.uploadText}>Upload</Text>
             </TouchableOpacity>
           </View>
@@ -182,6 +193,7 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
         {/* Quick Actions */}
         <View style={styles.actionsRow}>
           <TouchableOpacity
+                      activeOpacity={1}
             style={styles.actionButton}
             onPress={() => context.setScreen('personal-info')}
           >
@@ -189,6 +201,7 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
             <Text style={styles.actionText}>Edit Info</Text>
           </TouchableOpacity>
           <TouchableOpacity
+                      activeOpacity={1}
             style={styles.actionButton}
             onPress={() => context.setScreen('help-support')}
           >
@@ -199,6 +212,7 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
 
         {/* Logout */}
         <TouchableOpacity
+                    activeOpacity={1}
           style={styles.logoutButton}
           onPress={handleLogout}
         >
@@ -212,6 +226,7 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
+  scrollContent: { paddingBottom: 50 },
   header: {
     backgroundColor: '#006600',
     padding: 24,
@@ -362,11 +377,12 @@ const styles = StyleSheet.create({
     gap: 8,
     borderWidth: 1,
     borderColor: '#006600',
-    padding: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
     borderRadius: 12,
-    height: 48,
+    minHeight: 48,
   },
-  actionText: { color: '#006600', fontSize: 14, fontWeight: '600' },
+  actionText: { color: '#006600', fontSize: 14, fontWeight: '600', flexShrink: 0 },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -374,10 +390,12 @@ const styles = StyleSheet.create({
     gap: 8,
     borderWidth: 1,
     borderColor: '#fecaca',
-    padding: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
     borderRadius: 12,
     backgroundColor: '#fff',
-    height: 48,
+    minHeight: 48,
+    marginTop: 12,
   },
-  logoutText: { color: '#ef4444', fontSize: 14, fontWeight: '600' },
+  logoutText: { color: '#ef4444', fontSize: 14, fontWeight: '600', flexShrink: 0 },
 });

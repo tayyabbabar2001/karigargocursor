@@ -33,9 +33,18 @@ export function BidSubmission({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => context.setScreen('job-detail')}>
+        <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('job-detail')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Place Your Bid</Text>
@@ -100,7 +109,8 @@ export function BidSubmission({ context }: { context: AppContextType }) {
         </View>
 
         <TouchableOpacity
-          style={[styles.submitButton, (!bidAmount || !completionTime) && styles.submitButtonDisabled]}
+          activeOpacity={1}
+style={[styles.submitButton, (!bidAmount || !completionTime) && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={!bidAmount || !completionTime}
         >
@@ -108,7 +118,8 @@ export function BidSubmission({ context }: { context: AppContextType }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.cancelButton}
+          activeOpacity={1}
+style={styles.cancelButton}
           onPress={() => context.setScreen('job-detail')}
         >
           <Text style={styles.cancelButtonText}>Cancel</Text>

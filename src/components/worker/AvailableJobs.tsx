@@ -84,7 +84,7 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
             <Text style={styles.welcomeText}>Welcome back,</Text>
             <Text style={styles.userName}>Ali Khan 👋</Text>
           </View>
-          <TouchableOpacity onPress={() => context.setScreen('worker-profile')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('worker-profile')}>
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>AK</Text>
             </View>
@@ -129,7 +129,17 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
       </View>
 
       {/* Jobs List */}
-      <ScrollView style={styles.jobsList} showsVerticalScrollIndicator={false} bounces={false} scrollEventThrottle={16}>
+      <ScrollView 
+        style={styles.jobsList} 
+        showsVerticalScrollIndicator={false} 
+        bounces={false}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        scrollEventThrottle={16}
+        >
         <View style={styles.jobsHeader}>
           <Text style={styles.jobsTitle}>Nearby Jobs</Text>
           <Text style={styles.jobsCount}>{filteredJobs.length} jobs</Text>
@@ -137,6 +147,7 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
 
         {filteredJobs.map((job) => (
           <TouchableOpacity
+            activeOpacity={1}
             key={job.id}
             style={styles.jobCard}
             onPress={() => handleViewDetails(job)}
@@ -175,7 +186,8 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
                   <Text style={styles.customerName}>{job.customerName}</Text>
                 </View>
                 <TouchableOpacity
-                  style={styles.viewButton}
+                  activeOpacity={1}
+style={styles.viewButton}
                   onPress={() => handleViewDetails(job)}
                 >
                   <Text style={styles.viewButtonText}>View Details</Text>
@@ -189,14 +201,16 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity
-          style={[styles.navItem, activeTab === 'home' && styles.navItemActive]}
+          activeOpacity={1}
+style={[styles.navItem, activeTab === 'home' && styles.navItemActive]}
           onPress={() => setActiveTab('home')}
         >
           <Ionicons name="home" size={24} color={activeTab === 'home' ? '#006600' : '#999'} />
           <Text style={[styles.navText, activeTab === 'home' && styles.navTextActive]}>Jobs</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.navItem, activeTab === 'ongoing' && styles.navItemActive]}
+          activeOpacity={1}
+style={[styles.navItem, activeTab === 'ongoing' && styles.navItemActive]}
           onPress={() => {
             setActiveTab('ongoing');
             context.setScreen('ongoing-jobs');
@@ -206,7 +220,8 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
           <Text style={[styles.navText, activeTab === 'ongoing' && styles.navTextActive]}>Ongoing</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.navItem, activeTab === 'earnings' && styles.navItemActive]}
+          activeOpacity={1}
+style={[styles.navItem, activeTab === 'earnings' && styles.navItemActive]}
           onPress={() => {
             setActiveTab('earnings');
             context.setScreen('earnings-history');
@@ -216,7 +231,8 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
           <Text style={[styles.navText, activeTab === 'earnings' && styles.navTextActive]}>Earnings</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.navItem, activeTab === 'profile' && styles.navItemActive]}
+          activeOpacity={1}
+style={[styles.navItem, activeTab === 'profile' && styles.navItemActive]}
           onPress={() => {
             setActiveTab('profile');
             context.setScreen('worker-profile');

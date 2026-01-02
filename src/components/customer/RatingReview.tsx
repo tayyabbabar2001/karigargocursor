@@ -55,10 +55,19 @@ export function RatingReview({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Rate Your Experience</Text>
@@ -86,6 +95,7 @@ export function RatingReview({ context }: { context: AppContextType }) {
           <View style={styles.starsContainer}>
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity
+                activeOpacity={1}
                 key={star}
                 onPress={() => setRating(star)}
                 style={styles.starButton}
@@ -135,7 +145,8 @@ export function RatingReview({ context }: { context: AppContextType }) {
 
         {/* Submit Button */}
         <TouchableOpacity
-          style={[styles.submitButton, rating === 0 && styles.submitButtonDisabled]}
+          activeOpacity={1}
+style={[styles.submitButton, rating === 0 && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={rating === 0}
         >
@@ -143,7 +154,8 @@ export function RatingReview({ context }: { context: AppContextType }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.skipButton}
+          activeOpacity={1}
+style={styles.skipButton}
           onPress={() => context.setScreen('customer-dashboard')}
         >
           <Text style={styles.skipButtonText}>Skip for Now</Text>

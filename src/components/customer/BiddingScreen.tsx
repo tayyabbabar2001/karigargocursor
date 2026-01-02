@@ -46,10 +46,19 @@ export function BiddingScreen({ context }: { context: AppContextType }) {
   };
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
@@ -101,13 +110,15 @@ export function BiddingScreen({ context }: { context: AppContextType }) {
 
             <View style={styles.buttonRow}>
               <TouchableOpacity
-                style={[styles.button, styles.secondaryButton]}
+                activeOpacity={1}
+style={[styles.button, styles.secondaryButton]}
                 onPress={() => handleViewProfile(bid)}
               >
                 <Text style={styles.secondaryButtonText}>View Profile</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, styles.primaryButton]}
+                activeOpacity={1}
+style={[styles.button, styles.primaryButton]}
                 onPress={() => handleAcceptBid(bid)}
               >
                 <Text style={styles.primaryButtonText}>Accept</Text>

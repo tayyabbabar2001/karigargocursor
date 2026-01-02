@@ -113,7 +113,17 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.contentContainer} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <Logo size="medium" style={styles.logo} />
@@ -125,13 +135,15 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
         {/* Tabs */}
         <View style={styles.tabContainer}>
           <TouchableOpacity
+            activeOpacity={1}
             style={[styles.tab, activeTab === 'login' && styles.activeTab]}
             onPress={() => setActiveTab('login')}
           >
             <Text style={[styles.tabText, activeTab === 'login' && styles.activeTabText]}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
+            activeOpacity={1}
+style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
             onPress={() => setActiveTab('signup')}
           >
             <Text style={[styles.tabText, activeTab === 'signup' && styles.activeTabText]}>Sign Up</Text>
@@ -169,11 +181,12 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
               </View>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity activeOpacity={1}>
               <Text style={styles.forgotPassword}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <TouchableOpacity activeOpacity={1}
+          style={styles.loginButton} onPress={handleLogin}>
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
 
@@ -185,7 +198,8 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
             </View>
 
             {/* Google Sign In */}
-            <TouchableOpacity style={styles.googleButton}>
+            <TouchableOpacity activeOpacity={1}
+          style={styles.googleButton}>
               <GoogleLogo />
               <Text style={styles.googleButtonText}>Sign in with Google</Text>
             </TouchableOpacity>
@@ -217,7 +231,8 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    style={styles.otpButton}
+                    activeOpacity={1}
+style={styles.otpButton}
                     onPress={handleSendOtp}
                   >
                     <Text style={styles.otpButtonText}>Send Verification Code</Text>
@@ -240,12 +255,14 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
                     <Text style={styles.otpHint}>Code sent to {phone}</Text>
                   </View>
                   <TouchableOpacity
-                    style={styles.loginButton}
+                    activeOpacity={1}
+style={styles.loginButton}
                     onPress={handleVerifyOtp}
                   >
                     <Text style={styles.loginButtonText}>Verify & Login</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    activeOpacity={1}
                     onPress={() => setShowOtpInput(false)}
                   >
                     <Text style={styles.changeNumber}>Change mobile number</Text>
@@ -301,7 +318,8 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
             {!showSignupOtp ? (
               <>
                 <TouchableOpacity
-                  style={styles.otpButton}
+                  activeOpacity={1}
+style={styles.otpButton}
                   onPress={handleSendSignupOtp}
                 >
                   <Text style={styles.otpButtonText}>Send OTP Verification</Text>
@@ -324,12 +342,14 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
                   <Text style={styles.otpHint}>Code sent to {signupPhone}</Text>
                 </View>
                 <TouchableOpacity
-                  style={styles.otpButton}
+                  activeOpacity={1}
+style={styles.otpButton}
                   onPress={handleVerifySignupOtp}
                 >
                   <Text style={styles.otpButtonText}>Verify OTP</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  activeOpacity={1}
                   onPress={() => setShowSignupOtp(false)}
                 >
                   <Text style={styles.changeNumber}>Change mobile number</Text>
@@ -353,7 +373,8 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>CNIC Upload <Text style={styles.required}>*</Text></Text>
-              <TouchableOpacity style={styles.uploadArea} onPress={handlePickCnic}>
+              <TouchableOpacity activeOpacity={1}
+          style={styles.uploadArea} onPress={handlePickCnic}>
                 {signupCnicImage ? (
                   <Image source={{ uri: signupCnicImage }} style={styles.cnicPreview} />
                 ) : (
@@ -381,7 +402,8 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
             </View>
 
             <TouchableOpacity
-              style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicImage) && styles.loginButtonDisabled]}
+              activeOpacity={1}
+style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicImage) && styles.loginButtonDisabled]}
               onPress={handleSignup}
               disabled={!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicImage}
             >
@@ -392,7 +414,7 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
 
         {/* Switch to Worker */}
         <View style={styles.switchContainer}>
-          <TouchableOpacity onPress={handleWorkerLogin}>
+          <TouchableOpacity activeOpacity={1} onPress={handleWorkerLogin}>
             <Text style={styles.switchText}>Are you a worker? Login here</Text>
           </TouchableOpacity>
         </View>

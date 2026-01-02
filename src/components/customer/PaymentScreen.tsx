@@ -62,11 +62,20 @@ export function PaymentScreen({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('job-tracking')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('job-tracking')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Payment</Text>
@@ -114,7 +123,8 @@ export function PaymentScreen({ context }: { context: AppContextType }) {
           
           {/* Cash Payment */}
           <TouchableOpacity
-            style={[
+            activeOpacity={1}
+style={[
               styles.paymentOption,
               paymentMethod === 'cash' && styles.paymentOptionSelected,
             ]}
@@ -139,7 +149,8 @@ export function PaymentScreen({ context }: { context: AppContextType }) {
 
           {/* Online Payment (Disabled) */}
           <TouchableOpacity
-            style={[styles.paymentOption, styles.paymentOptionDisabled]}
+            activeOpacity={1}
+style={[styles.paymentOption, styles.paymentOptionDisabled]}
             disabled
           >
             <View style={styles.paymentOptionContent}>
@@ -156,14 +167,16 @@ export function PaymentScreen({ context }: { context: AppContextType }) {
         </View>
 
         {/* Receipt Download */}
-        <TouchableOpacity style={styles.downloadButton}>
+        <TouchableOpacity activeOpacity={1}
+          style={styles.downloadButton}>
           <Ionicons name="download-outline" size={20} color="#333" />
           <Text style={styles.downloadButtonText}>Download Receipt</Text>
         </TouchableOpacity>
 
         {/* Confirm Payment */}
         <TouchableOpacity
-          style={styles.confirmButton}
+          activeOpacity={1}
+style={styles.confirmButton}
           onPress={handleConfirmPayment}
         >
           <Text style={styles.confirmButtonText}>Confirm Payment</Text>

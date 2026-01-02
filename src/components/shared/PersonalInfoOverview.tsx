@@ -39,11 +39,21 @@ export function PersonalInfoOverview({ context }: { context: AppContextType }) {
   ];
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity
+            activeOpacity={1}
             onPress={() => context.setScreen(context.userRole === 'customer' ? 'customer-profile' : 'worker-profile')}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -59,7 +69,8 @@ export function PersonalInfoOverview({ context }: { context: AppContextType }) {
             <View key={index}>
               {index > 0 && <View style={styles.separator} />}
               <TouchableOpacity
-                style={styles.infoItem}
+                activeOpacity={1}
+style={styles.infoItem}
                 onPress={item.onClick}
               >
                 <View style={styles.iconContainer}>

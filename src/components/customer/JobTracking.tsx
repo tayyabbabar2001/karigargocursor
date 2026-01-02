@@ -22,11 +22,20 @@ export function JobTracking({ context }: { context: AppContextType }) {
   ];
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Job Tracking</Text>
@@ -114,11 +123,13 @@ export function JobTracking({ context }: { context: AppContextType }) {
               </View>
             </View>
             <View style={styles.actionButtons}>
-              <TouchableOpacity style={styles.phoneButton}>
+              <TouchableOpacity activeOpacity={1}
+          style={styles.phoneButton}>
                 <Ionicons name="call" size={20} color="#fff" />
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.messageButton}
+                activeOpacity={1}
+style={styles.messageButton}
                 onPress={() => context.setScreen('chat')}
               >
                 <Ionicons name="chatbubble-ellipses" size={20} color="#666" />
@@ -138,7 +149,8 @@ export function JobTracking({ context }: { context: AppContextType }) {
 
         {/* Mark as Complete Button */}
         <TouchableOpacity
-          style={styles.completeButton}
+          activeOpacity={1}
+style={styles.completeButton}
           onPress={() => context.setScreen('payment')}
         >
           <Text style={styles.completeButtonText}>Mark as Completed</Text>

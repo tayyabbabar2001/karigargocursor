@@ -102,7 +102,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
             <Text style={styles.helloText}>Hello,</Text>
             <Text style={styles.userName}>{context.currentUser?.name || 'Ahmed'} 👋</Text>
           </View>
-          <TouchableOpacity onPress={() => context.setScreen('customer-profile')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-profile')}>
             <Image
               source={{ uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed' }}
               style={styles.profileAvatar}
@@ -112,6 +112,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
 
         {/* Post Task Button */}
         <TouchableOpacity
+                    activeOpacity={1}
           style={styles.postTaskButton}
           onPress={() => context.setScreen('post-task')}
         >
@@ -120,7 +121,17 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} bounces={false} scrollEventThrottle={16}>
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false} 
+        bounces={false}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        scrollEventThrottle={16}
+        >
         {/* Service Categories */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Service Categories</Text>
@@ -131,10 +142,15 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
             style={styles.categoriesScroll}
             scrollEnabled={false}
             bounces={false}
+            alwaysBounceVertical={false}
+            overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
           >
             {/* Duplicate categories for infinite loop */}
             {[...categories, ...categories, ...categories].map((category, index) => (
-              <TouchableOpacity key={`${category.name}-${index}`} style={styles.categoryItem}>
+              <TouchableOpacity activeOpacity={1} key={`${category.name}-${index}`} style={styles.categoryItem}>
                 <View style={[styles.categoryIcon, { backgroundColor: category.color + '20' }]}>
                   <Text style={styles.categoryEmoji}>{category.icon}</Text>
                 </View>
@@ -148,7 +164,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Ongoing Jobs</Text>
-            <TouchableOpacity>
+            <TouchableOpacity activeOpacity={1}>
               <Text style={styles.viewAll}>View All</Text>
             </TouchableOpacity>
           </View>
@@ -159,6 +175,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
           ) : (
             ongoingJobs.map((job) => (
               <TouchableOpacity
+                          activeOpacity={1}
                 key={job.id}
                 style={styles.jobCard}
                 onPress={() => {
@@ -197,7 +214,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Completed Jobs</Text>
-            <TouchableOpacity>
+            <TouchableOpacity activeOpacity={1}>
               <Text style={styles.viewAll}>View All</Text>
             </TouchableOpacity>
           </View>
@@ -209,7 +226,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
                   <Text style={styles.jobWorker}>{job.worker}</Text>
                   <View style={styles.ratingContainer}>
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Text key={i} style={i < job.rating ? styles.starFilled : styles.starEmpty}>
+                      <Text key={i} style={i < (job.rating || 0) ? styles.starFilled : styles.starEmpty}>
                         ★
                       </Text>
                     ))}
@@ -225,21 +242,24 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity
-          style={styles.navItem}
+          activeOpacity={1}
+style={styles.navItem}
           onPress={() => setActiveTab('home')}
         >
           <Ionicons name="home" size={24} color={activeTab === 'home' ? '#006600' : '#999'} />
           <Text style={[styles.navText, activeTab === 'home' && styles.navTextActive]}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.navItem}
+          activeOpacity={1}
+style={styles.navItem}
           onPress={() => setActiveTab('jobs')}
         >
           <Ionicons name="briefcase" size={24} color={activeTab === 'jobs' ? '#006600' : '#999'} />
           <Text style={[styles.navText, activeTab === 'jobs' && styles.navTextActive]}>My Jobs</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.navItem}
+          activeOpacity={1}
+style={styles.navItem}
           onPress={() => {
             setActiveTab('messages');
             context.setScreen('chat');
@@ -249,7 +269,8 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
           <Text style={[styles.navText, activeTab === 'messages' && styles.navTextActive]}>Messages</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.navItem}
+          activeOpacity={1}
+style={styles.navItem}
           onPress={() => {
             setActiveTab('profile');
             context.setScreen('customer-profile');

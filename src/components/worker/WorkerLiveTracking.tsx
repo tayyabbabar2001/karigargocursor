@@ -43,7 +43,7 @@ export function WorkerLiveTracking({ context }: { context: AppContextType }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => context.setScreen('ongoing-jobs')}>
+        <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('ongoing-jobs')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
@@ -88,7 +88,8 @@ export function WorkerLiveTracking({ context }: { context: AppContextType }) {
         </View>
 
         {/* Navigation Button */}
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity activeOpacity={1}
+          style={styles.navButton}>
           <Ionicons name="navigate" size={20} color="#006600" />
         </TouchableOpacity>
       </View>
@@ -121,13 +122,15 @@ export function WorkerLiveTracking({ context }: { context: AppContextType }) {
 
         <View style={styles.actionButtons}>
           <TouchableOpacity
-            style={styles.chatButton}
+            activeOpacity={1}
+style={styles.chatButton}
             onPress={() => context.setScreen('worker-messages')}
           >
             <Ionicons name="chatbubble-outline" size={20} color="#006600" />
             <Text style={styles.chatButtonText}>Chat</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.callButton}>
+          <TouchableOpacity activeOpacity={1}
+          style={styles.callButton}>
             <Ionicons name="call-outline" size={20} color="#fff" />
             <Text style={styles.callButtonText}>Call</Text>
           </TouchableOpacity>
@@ -135,7 +138,8 @@ export function WorkerLiveTracking({ context }: { context: AppContextType }) {
 
         {workerStatus === 'on-the-way' && (
           <TouchableOpacity
-            style={styles.arrivedButton}
+            activeOpacity={1}
+style={styles.arrivedButton}
             onPress={() => {
               setWorkerStatus('arrived');
               setDistance('0 km');
@@ -148,7 +152,8 @@ export function WorkerLiveTracking({ context }: { context: AppContextType }) {
 
         {workerStatus === 'arrived' && (
           <TouchableOpacity
-            style={styles.startButton}
+            activeOpacity={1}
+style={styles.startButton}
             onPress={() => setWorkerStatus('in-progress')}
           >
             <Text style={styles.startButtonText}>Start Working</Text>
@@ -157,7 +162,8 @@ export function WorkerLiveTracking({ context }: { context: AppContextType }) {
 
         {workerStatus === 'in-progress' && (
           <TouchableOpacity
-            style={styles.completeButton}
+            activeOpacity={1}
+style={styles.completeButton}
             onPress={() => {
               setWorkerStatus('completed');
               setTimeout(() => context.setScreen('ongoing-jobs'), 1500);

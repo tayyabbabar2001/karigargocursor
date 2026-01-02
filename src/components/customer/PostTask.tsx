@@ -137,7 +137,7 @@ export function PostTask({ context }: { context: AppContextType }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Post a Task</Text>
@@ -164,7 +164,17 @@ export function PostTask({ context }: { context: AppContextType }) {
       </View>
 
       {/* Form */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.formContainer} bounces={false} scrollEventThrottle={16}>
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={styles.formContainer} 
+        bounces={false}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        scrollEventThrottle={16}
+        >
         {step === 1 && (
           <View style={styles.stepContent}>
             <View style={styles.inputGroup}>
@@ -212,7 +222,8 @@ export function PostTask({ context }: { context: AppContextType }) {
                 <View style={styles.attachedMediaContainer}>
                   <Image source={{ uri: attachedImage }} style={styles.attachedImage} />
                   <TouchableOpacity
-                    style={styles.removeButton}
+                    activeOpacity={1}
+style={styles.removeButton}
                     onPress={() => setAttachedImage(null)}
                   >
                     <Ionicons name="close-circle" size={24} color="#c00" />
@@ -225,7 +236,8 @@ export function PostTask({ context }: { context: AppContextType }) {
                     <Text style={styles.videoPreviewText}>Video Selected</Text>
                   </View>
                   <TouchableOpacity
-                    style={styles.removeButton}
+                    activeOpacity={1}
+style={styles.removeButton}
                     onPress={() => setAttachedVideo(null)}
                   >
                     <Ionicons name="close-circle" size={24} color="#c00" />
@@ -233,11 +245,13 @@ export function PostTask({ context }: { context: AppContextType }) {
                 </View>
               ) : (
                 <View style={styles.uploadOptions}>
-                  <TouchableOpacity style={styles.uploadArea} onPress={handlePickImage}>
+                  <TouchableOpacity activeOpacity={1}
+          style={styles.uploadArea} onPress={handlePickImage}>
                     <Ionicons name="image-outline" size={32} color="#999" />
                     <Text style={styles.uploadText}>Photo</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.uploadArea} onPress={handlePickVideo}>
+                  <TouchableOpacity activeOpacity={1}
+          style={styles.uploadArea} onPress={handlePickVideo}>
                     <Ionicons name="videocam-outline" size={32} color="#999" />
                     <Text style={styles.uploadText}>Video</Text>
                   </TouchableOpacity>
@@ -246,7 +260,8 @@ export function PostTask({ context }: { context: AppContextType }) {
             </View>
 
             <TouchableOpacity
-              style={[
+              activeOpacity={1}
+style={[
                 styles.button,
                 (!title || !category || !description) && styles.buttonDisabled,
               ]}
@@ -282,13 +297,15 @@ export function PostTask({ context }: { context: AppContextType }) {
 
             <View style={styles.buttonRow}>
               <TouchableOpacity
-                style={[styles.button, styles.buttonSecondary]}
+                activeOpacity={1}
+style={[styles.button, styles.buttonSecondary]}
                 onPress={() => setStep(1)}
               >
                 <Text style={[styles.buttonText, styles.buttonTextSecondary]}>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, (!location) && styles.buttonDisabled]}
+                activeOpacity={1}
+style={[styles.button, (!location) && styles.buttonDisabled]}
                 onPress={() => setStep(3)}
                 disabled={!location}
               >
@@ -318,7 +335,8 @@ export function PostTask({ context }: { context: AppContextType }) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Preferred Date</Text>
               <TouchableOpacity
-                style={styles.inputWrapper}
+                activeOpacity={1}
+style={styles.inputWrapper}
                 onPress={() => setShowDatePicker(true)}
               >
                 <Ionicons name="calendar-outline" size={16} color="#999" style={styles.inputIcon} />
@@ -343,7 +361,8 @@ export function PostTask({ context }: { context: AppContextType }) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Preferred Time</Text>
               <TouchableOpacity
-                style={styles.inputWrapper}
+                activeOpacity={1}
+style={styles.inputWrapper}
                 onPress={() => setShowTimePicker(true)}
               >
                 <Ionicons name="time-outline" size={16} color="#999" style={styles.inputIcon} />
@@ -366,13 +385,15 @@ export function PostTask({ context }: { context: AppContextType }) {
 
             <View style={styles.buttonRow}>
               <TouchableOpacity
-                style={[styles.button, styles.buttonSecondary]}
+                activeOpacity={1}
+style={[styles.button, styles.buttonSecondary]}
                 onPress={() => setStep(2)}
               >
                 <Text style={[styles.buttonText, styles.buttonTextSecondary]}>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[
+                activeOpacity={1}
+style={[
                   styles.button,
                   (!budget) && styles.buttonDisabled,
                 ]}

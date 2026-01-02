@@ -12,7 +12,7 @@ export function PlaceholderScreen({ context, screenName, backScreen = 'customer-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => context.setScreen(backScreen)}>
+        <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen(backScreen)}>
           <Text style={styles.backButton}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{screenName}</Text>

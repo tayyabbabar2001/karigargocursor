@@ -17,9 +17,18 @@ export function JobDetail({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => context.setScreen('available-jobs')}>
+        <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('available-jobs')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Job Details</Text>
@@ -101,7 +110,8 @@ export function JobDetail({ context }: { context: AppContextType }) {
         </View>
 
         <TouchableOpacity
-          style={styles.actionButton}
+          activeOpacity={1}
+style={styles.actionButton}
           onPress={() => context.setScreen('bid-submission')}
         >
           <Text style={styles.actionButtonText}>Place a Bid</Text>

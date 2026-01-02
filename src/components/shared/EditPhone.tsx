@@ -39,10 +39,19 @@ export function EditPhone({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('personal-info')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('personal-info')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Phone Number</Text>
@@ -62,7 +71,8 @@ export function EditPhone({ context }: { context: AppContextType }) {
         </View>
 
         <TouchableOpacity
-          style={[styles.button, !phone.trim() && styles.buttonDisabled]}
+          activeOpacity={1}
+style={[styles.button, !phone.trim() && styles.buttonDisabled]}
           onPress={handleSave}
           disabled={!phone.trim()}
         >

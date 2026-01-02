@@ -6,7 +6,7 @@ export function JobManagement({ context }: { context: AppContextType }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => context.setScreen('admin-dashboard')}>
+        <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('admin-dashboard')}>
           <Text style={styles.backButton}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Job Management</Text>

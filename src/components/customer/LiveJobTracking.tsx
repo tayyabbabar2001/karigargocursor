@@ -33,10 +33,19 @@ export function LiveJobTracking({ context }: { context: AppContextType }) {
   }[workerStatus];
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
           <View style={styles.headerText}>
@@ -69,13 +78,15 @@ export function LiveJobTracking({ context }: { context: AppContextType }) {
 
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={styles.button}
+            activeOpacity={1}
+style={styles.button}
             onPress={() => context.setScreen('chat')}
           >
             <Text style={styles.buttonText}>💬 Message</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, styles.callButton]}
+            activeOpacity={1}
+style={[styles.button, styles.callButton]}
           >
             <Text style={styles.buttonText}>📞 Call</Text>
           </TouchableOpacity>
@@ -83,7 +94,8 @@ export function LiveJobTracking({ context }: { context: AppContextType }) {
 
         {workerStatus === 'in-progress' && (
           <TouchableOpacity
-            style={[styles.button, styles.completeButton]}
+            activeOpacity={1}
+style={[styles.button, styles.completeButton]}
             onPress={handleJobComplete}
           >
             <Text style={styles.buttonText}>Mark as Complete</Text>

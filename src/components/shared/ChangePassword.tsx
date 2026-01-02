@@ -52,11 +52,21 @@ export function ChangePassword({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity
+            activeOpacity={1}
             onPress={() => context.setScreen(context.userRole === 'customer' ? 'customer-profile' : 'worker-profile')}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -78,6 +88,7 @@ export function ChangePassword({ context }: { context: AppContextType }) {
               secureTextEntry={!showCurrent}
             />
             <TouchableOpacity
+              activeOpacity={1}
               onPress={() => setShowCurrent(!showCurrent)}
               style={styles.eyeButton}
             >
@@ -102,6 +113,7 @@ export function ChangePassword({ context }: { context: AppContextType }) {
               secureTextEntry={!showNew}
             />
             <TouchableOpacity
+              activeOpacity={1}
               onPress={() => setShowNew(!showNew)}
               style={styles.eyeButton}
             >
@@ -126,6 +138,7 @@ export function ChangePassword({ context }: { context: AppContextType }) {
               secureTextEntry={!showConfirm}
             />
             <TouchableOpacity
+              activeOpacity={1}
               onPress={() => setShowConfirm(!showConfirm)}
               style={styles.eyeButton}
             >
@@ -160,7 +173,8 @@ export function ChangePassword({ context }: { context: AppContextType }) {
 
         {/* Update Button */}
         <TouchableOpacity
-          style={[
+          activeOpacity={1}
+style={[
             styles.updateButton,
             (!currentPassword || !newPassword || !confirmPassword) && styles.updateButtonDisabled,
           ]}

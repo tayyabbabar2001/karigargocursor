@@ -72,11 +72,21 @@ export function HelpSupport({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity
+            activeOpacity={1}
             onPress={() => context.setScreen(context.userRole === 'customer' ? 'customer-profile' : 'worker-profile')}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -117,7 +127,8 @@ export function HelpSupport({ context }: { context: AppContextType }) {
 
                 {/* Message Support */}
                 <TouchableOpacity
-                  style={styles.messageButton}
+                  activeOpacity={1}
+style={styles.messageButton}
                   onPress={() => setShowContactForm(true)}
                 >
                   <Ionicons name="chatbubble-ellipses" size={20} color="#fff" />
@@ -134,7 +145,8 @@ export function HelpSupport({ context }: { context: AppContextType }) {
                 {faqs.map((faq, index) => (
                   <View key={index} style={styles.faqItem}>
                     <TouchableOpacity
-                      style={styles.faqHeader}
+                      activeOpacity={1}
+style={styles.faqHeader}
                       onPress={() => setExpandedFaq(expandedFaq === index ? null : index)}
                     >
                       <Text style={styles.faqQuestion}>{faq.question}</Text>
@@ -169,6 +181,7 @@ export function HelpSupport({ context }: { context: AppContextType }) {
             <View style={styles.formHeader}>
               <Text style={styles.cardTitle}>Contact Support</Text>
               <TouchableOpacity
+                activeOpacity={1}
                 onPress={() => setShowContactForm(false)}
                 style={styles.closeButton}
               >
@@ -201,7 +214,8 @@ export function HelpSupport({ context }: { context: AppContextType }) {
               </View>
 
               <TouchableOpacity
-                style={[
+                activeOpacity={1}
+style={[
                   styles.submitButton,
                   (!subject.trim() || !message.trim()) && styles.submitButtonDisabled,
                 ]}

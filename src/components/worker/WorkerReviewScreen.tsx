@@ -45,7 +45,16 @@ export function WorkerReviewScreen({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Rate the Customer</Text>
       </View>
@@ -67,6 +76,7 @@ export function WorkerReviewScreen({ context }: { context: AppContextType }) {
           <View style={styles.starsContainer}>
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity
+                activeOpacity={1}
                 key={star}
                 onPress={() => setRating(star)}
                 style={styles.starButton}
@@ -98,7 +108,8 @@ export function WorkerReviewScreen({ context }: { context: AppContextType }) {
         </View>
 
         <TouchableOpacity
-          style={[styles.submitButton, rating === 0 && styles.submitButtonDisabled]}
+          activeOpacity={1}
+style={[styles.submitButton, rating === 0 && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={rating === 0}
         >

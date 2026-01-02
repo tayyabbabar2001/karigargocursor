@@ -189,7 +189,7 @@ export function ChatScreen({ context }: { context: AppContextType }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Image
@@ -203,14 +203,24 @@ export function ChatScreen({ context }: { context: AppContextType }) {
               <Text style={styles.onlineText}>Online</Text>
             </View>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity activeOpacity={1}>
             <Ionicons name="ellipsis-vertical" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Messages */}
-      <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent} bounces={false} scrollEventThrottle={16}>
+      <ScrollView 
+        style={styles.messagesContainer} 
+        contentContainerStyle={styles.messagesContent} 
+        bounces={false}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        scrollEventThrottle={16}
+        >
         {messages.map((msg) => (
           <View
             key={msg.id}
@@ -263,7 +273,8 @@ export function ChatScreen({ context }: { context: AppContextType }) {
       {/* Mark as Complete Option */}
       <View style={styles.completeSection}>
         <TouchableOpacity
-          style={styles.completeButton}
+          activeOpacity={1}
+style={styles.completeButton}
           onPress={() => context.setScreen('payment')}
         >
           <Text style={styles.completeButtonText}>Mark Job as Complete</Text>
@@ -276,14 +287,15 @@ export function ChatScreen({ context }: { context: AppContextType }) {
           <View style={styles.recordingContainer}>
             <View style={styles.recordingIndicator} />
             <Text style={styles.recordingText}>{formatDuration(recordingDuration)}</Text>
-            <TouchableOpacity onPress={stopRecording} style={styles.stopButton}>
+            <TouchableOpacity activeOpacity={1} onPress={stopRecording} style={styles.stopButton}>
               <Ionicons name="stop" size={24} color="#fff" />
             </TouchableOpacity>
           </View>
         ) : (
           <>
             <TouchableOpacity
-              style={styles.attachButton}
+              activeOpacity={1}
+style={styles.attachButton}
               onPress={() => setShowAttachmentMenu(true)}
             >
               <Ionicons name="attach" size={24} color="#666" />
@@ -297,14 +309,16 @@ export function ChatScreen({ context }: { context: AppContextType }) {
               maxLength={500}
             />
             <TouchableOpacity
-              style={styles.voiceButton}
+              activeOpacity={1}
+style={styles.voiceButton}
               onPress={startRecording}
               onLongPress={startRecording}
             >
               <Ionicons name="mic" size={24} color="#666" />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.sendButton, !message.trim() && styles.sendButtonDisabled]}
+              activeOpacity={1}
+style={[styles.sendButton, !message.trim() && styles.sendButtonDisabled]}
               onPress={handleSend}
               disabled={!message.trim()}
             >
@@ -322,21 +336,24 @@ export function ChatScreen({ context }: { context: AppContextType }) {
         onRequestClose={() => setShowAttachmentMenu(false)}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
           activeOpacity={1}
+          style={styles.modalOverlay}
           onPress={() => setShowAttachmentMenu(false)}
         >
           <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.modalOption} onPress={handlePickImage}>
+            <TouchableOpacity activeOpacity={1}
+          style={styles.modalOption} onPress={handlePickImage}>
               <Ionicons name="image" size={24} color="#006600" />
               <Text style={styles.modalOptionText}>Photo</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption} onPress={handlePickVideo}>
+            <TouchableOpacity activeOpacity={1}
+          style={styles.modalOption} onPress={handlePickVideo}>
               <Ionicons name="videocam" size={24} color="#006600" />
               <Text style={styles.modalOptionText}>Video</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.modalOption}
+              activeOpacity={1}
+style={styles.modalOption}
               onPress={() => {
                 setShowAttachmentMenu(false);
                 startRecording();

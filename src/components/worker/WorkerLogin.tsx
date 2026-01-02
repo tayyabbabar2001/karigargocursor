@@ -99,7 +99,17 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} bounces={false} scrollEventThrottle={16}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.contentContainer} 
+      bounces={false}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+        nestedScrollEnabled={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={16}
+        >
       {/* Header */}
       <View style={styles.header}>
         <Logo size="medium" style={styles.logo} />
@@ -111,13 +121,15 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
         {/* Tabs */}
         <View style={styles.tabContainer}>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'login' && styles.activeTab]}
+            activeOpacity={1}
+style={[styles.tab, activeTab === 'login' && styles.activeTab]}
             onPress={() => setActiveTab('login')}
           >
             <Text style={[styles.tabText, activeTab === 'login' && styles.activeTabText]}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
+            activeOpacity={1}
+style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
             onPress={() => setActiveTab('signup')}
           >
             <Text style={[styles.tabText, activeTab === 'signup' && styles.activeTabText]}>Sign Up</Text>
@@ -155,11 +167,12 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
               </View>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity activeOpacity={1}>
               <Text style={styles.forgotPassword}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <TouchableOpacity activeOpacity={1}
+          style={styles.loginButton} onPress={handleLogin}>
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
 
@@ -190,7 +203,8 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    style={styles.otpButton}
+                    activeOpacity={1}
+style={styles.otpButton}
                     onPress={handleSendOtp}
                   >
                     <Text style={styles.otpButtonText}>Send Verification Code</Text>
@@ -211,12 +225,14 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
                     <Text style={styles.otpHint}>Code sent to {phone}</Text>
                   </View>
                   <TouchableOpacity
-                    style={styles.loginButton}
+                    activeOpacity={1}
+style={styles.loginButton}
                     onPress={handleVerifyOtp}
                   >
                     <Text style={styles.loginButtonText}>Verify & Login</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    activeOpacity={1}
                     onPress={() => setShowOtpInput(false)}
                   >
                     <Text style={styles.changeNumber}>Change mobile number</Text>
@@ -292,7 +308,8 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
 
             {!showSignupOtp ? (
               <TouchableOpacity
-                style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
+                activeOpacity={1}
+style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
                 onPress={handleSendSignupOtp}
                 disabled={!signupPhone}
               >
@@ -315,6 +332,7 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
                   <Text style={styles.otpHint}>Code sent to {signupPhone}</Text>
                 </View>
                 <TouchableOpacity
+                  activeOpacity={1}
                   onPress={() => setShowSignupOtp(false)}
                 >
                   <Text style={styles.changeNumber}>Change mobile number</Text>
@@ -359,7 +377,8 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>CNIC Upload <Text style={styles.required}>*</Text></Text>
               <View style={styles.cnicUploadContainer}>
-                <TouchableOpacity style={styles.cnicUploadButton} onPress={() => handlePickCnic('front')}>
+                <TouchableOpacity activeOpacity={1}
+          style={styles.cnicUploadButton} onPress={() => handlePickCnic('front')}>
                   {signupCnicFront ? (
                     <Image source={{ uri: signupCnicFront }} style={styles.cnicImagePreview} />
                   ) : (
@@ -369,7 +388,8 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
                     </>
                   )}
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.cnicUploadButton} onPress={() => handlePickCnic('back')}>
+                <TouchableOpacity activeOpacity={1}
+          style={styles.cnicUploadButton} onPress={() => handlePickCnic('back')}>
                   {signupCnicBack ? (
                     <Image source={{ uri: signupCnicBack }} style={styles.cnicImagePreview} />
                   ) : (
@@ -397,7 +417,8 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
             </View>
 
             <TouchableOpacity
-              style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity) && styles.loginButtonDisabled]}
+              activeOpacity={1}
+style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity) && styles.loginButtonDisabled]}
               onPress={handleVerifySignupOtp}
               disabled={!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity}
             >
@@ -408,7 +429,7 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
 
         {/* Switch to Customer */}
         <View style={styles.switchContainer}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-login')}>
+          <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-login')}>
             <Text style={styles.switchText}>Looking for workers? Login as customer</Text>
           </TouchableOpacity>
         </View>
