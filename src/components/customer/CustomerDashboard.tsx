@@ -104,7 +104,10 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
           </View>
           <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-profile')}>
             <Image
-              source={{ uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed' }}
+              source={{ 
+                uri: context.currentUser?.profilePicture || 
+                'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (context.currentUser?.name || 'Ahmed')
+              }}
               style={styles.profileAvatar}
             />
           </TouchableOpacity>
@@ -164,7 +167,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Ongoing Jobs</Text>
-            <TouchableOpacity activeOpacity={1}>
+            <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-my-jobs')}>
               <Text style={styles.viewAll}>View All</Text>
             </TouchableOpacity>
           </View>
@@ -252,7 +255,10 @@ style={styles.navItem}
         <TouchableOpacity
           activeOpacity={1}
 style={styles.navItem}
-          onPress={() => setActiveTab('jobs')}
+          onPress={() => {
+            setActiveTab('jobs');
+            context.setScreen('customer-my-jobs');
+          }}
         >
           <Ionicons name="briefcase" size={24} color={activeTab === 'jobs' ? '#006600' : '#999'} />
           <Text style={[styles.navText, activeTab === 'jobs' && styles.navTextActive]}>My Jobs</Text>
@@ -304,7 +310,7 @@ const styles = StyleSheet.create({
   appTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -321,7 +327,7 @@ const styles = StyleSheet.create({
   userName: {
     color: '#fff',
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   profileAvatar: {
     width: 48,
@@ -345,9 +351,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   postTaskText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#006600',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   scrollView: {
     flex: 1,
@@ -357,7 +363,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 16,
     color: '#333',
   },
@@ -370,7 +376,7 @@ const styles = StyleSheet.create({
   viewAll: {
     color: '#006600',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   categoriesScroll: {
     marginTop: 8,
@@ -393,7 +399,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   categoryEmoji: {
-    fontSize: 32,
+    fontSize: 24,
   },
   categoryName: {
     fontSize: 12,
@@ -422,7 +428,7 @@ const styles = StyleSheet.create({
   },
   jobTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 4,
     color: '#333',
   },
@@ -454,7 +460,7 @@ const styles = StyleSheet.create({
   statusText: {
     color: '#fff',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -495,7 +501,7 @@ const styles = StyleSheet.create({
   },
   navTextActive: {
     color: '#006600',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   emptyState: {
     padding: 24,

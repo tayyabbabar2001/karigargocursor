@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   content: {
     padding: 24,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 16,
     color: '#333',
   },
@@ -250,12 +250,12 @@ const styles = StyleSheet.create({
   },
   totalLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
   },
   totalValue: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#006600',
   },
   separator: {
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   confirmationContainer: {
     flex: 1,
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   },
   confirmationTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
   },

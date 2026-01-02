@@ -196,7 +196,12 @@ style={styles.faqHeader}
                   style={styles.input}
                   placeholder="What do you need help with?"
                   value={subject}
-                  onChangeText={setSubject}
+                  onChangeText={(text) => {
+                    // Only allow letters, spaces, and basic punctuation
+                    const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+                    setSubject(cleaned);
+                  }}
+                  autoCapitalize="words"
                 />
               </View>
 
@@ -206,8 +211,13 @@ style={styles.faqHeader}
                   style={[styles.input, styles.textArea]}
                   placeholder="Describe your issue or question..."
                   value={message}
-                  onChangeText={setMessage}
+                  onChangeText={(text) => {
+                    // Only allow letters, spaces, and basic punctuation
+                    const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+                    setMessage(cleaned);
+                  }}
                   multiline
+                  autoCapitalize="sentences"
                   numberOfLines={6}
                   textAlignVertical="top"
                 />
@@ -257,7 +267,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   content: {
     padding: 24,
@@ -275,7 +285,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 16,
     color: '#333',
   },
@@ -323,7 +333,7 @@ const styles = StyleSheet.create({
   messageButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   faqList: {
     gap: 12,
@@ -363,7 +373,7 @@ const styles = StyleSheet.create({
   },
   hoursTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#1565c0',
     marginBottom: 8,
   },
@@ -417,7 +427,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   confirmationContainer: {
     flex: 1,
@@ -440,7 +450,7 @@ const styles = StyleSheet.create({
   },
   confirmationTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
   },

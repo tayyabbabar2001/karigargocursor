@@ -1,10 +1,70 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image, Switch } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image, Switch, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { AppContextType } from '../../types';
+import * as ImagePicker from 'expo-image-picker';
 
 export function CustomerProfile({ context }: { context: AppContextType }) {
   const [notifications, setNotifications] = useState(true);
   const user = context.currentUser || { name: 'Ahmed', email: 'ahmed@example.com' };
+
+  const handlePickProfilePicture = async () => {
+    // Request camera permissions
+    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status: libraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (cameraStatus !== 'granted' && libraryStatus !== 'granted') {
+      Alert.alert('Permission needed', 'Please grant camera and photo library permissions to upload your profile picture');
+      return;
+    }
+
+    // Show action sheet to choose camera or library
+    Alert.alert(
+      'Upload Profile Picture',
+      'Take a photo or choose from gallery',
+      [
+        {
+          text: 'Camera',
+          onPress: async () => {
+            const result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1, 1], // Square for profile picture
+              quality: 0.8,
+            });
+            if (!result.canceled) {
+              context.setCurrentUser({
+                ...context.currentUser,
+                profilePicture: result.assets[0].uri,
+              });
+            }
+          },
+        },
+        {
+          text: 'Photo Library',
+          onPress: async () => {
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1, 1], // Square for profile picture
+              quality: 0.8,
+            });
+            if (!result.canceled) {
+              context.setCurrentUser({
+                ...context.currentUser,
+                profilePicture: result.assets[0].uri,
+              });
+            }
+          },
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   const handleLogout = () => {
     context.setCurrentUser(null);
@@ -26,16 +86,24 @@ export function CustomerProfile({ context }: { context: AppContextType }) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
-            <Text style={styles.backButton}>←</Text>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profile & Settings</Text>
         </View>
 
         <View style={styles.userInfo}>
-          <Image
-            source={{ uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed' }}
-            style={styles.avatar}
-          />
+          <TouchableOpacity activeOpacity={1} onPress={handlePickProfilePicture}>
+            <Image
+              source={{ 
+                uri: user.profilePicture || 
+                'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (user.name || 'Ahmed')
+              }}
+              style={styles.avatar}
+            />
+            <View style={styles.editPictureBadge}>
+              <Ionicons name="camera" size={16} color="#fff" />
+            </View>
+          </TouchableOpacity>
           <View style={styles.userDetails}>
             <Text style={styles.userName}>{user.name}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
@@ -163,15 +231,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  backButton: {
-    color: '#fff',
-    fontSize: 24,
-    marginRight: 12,
-  },
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   userInfo: {
     flexDirection: 'row',
@@ -185,13 +248,26 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#fff',
   },
+  editPictureBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#006600',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
   userDetails: {
     flex: 1,
   },
   userName: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   userEmail: {
     color: 'rgba(255, 255, 255, 0.8)',
@@ -224,7 +300,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 16,
   },
   menuItem: {
@@ -277,7 +353,7 @@ const styles = StyleSheet.create({
   logoutText: {
     color: '#ff6b6b',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });
 

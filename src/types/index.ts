@@ -14,6 +14,7 @@ export type Screen =
   | 'payment'
   | 'rating-review'
   | 'customer-profile'
+  | 'customer-my-jobs'
   // Worker screens
   | 'worker-login'
   | 'available-jobs'

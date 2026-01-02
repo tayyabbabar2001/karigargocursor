@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   taskInfo: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   taskTitle: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 8,
   },
   locationRow: {
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 24,
     color: '#333',
   },
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   },
   stepLabelCompleted: {
     color: '#333',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   stepSubtext: {
     fontSize: 14,
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
   },
   workerName: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
   },
@@ -382,6 +382,6 @@ const styles = StyleSheet.create({
   completeButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });

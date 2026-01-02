@@ -39,7 +39,8 @@ export function WorkerMessages({ context }: { context: AppContextType }) {
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const customerName = context.currentTask?.customerName || 'Customer';
-  const customerPhoto = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Customer';
+  const customerPhoto = context.currentTask?.customerProfilePicture ||
+                       'https://api.dicebear.com/7.x/avataaars/svg?seed=' + customerName;
 
   const handleSend = () => {
     if (message.trim()) {
@@ -226,6 +227,12 @@ export function WorkerMessages({ context }: { context: AppContextType }) {
             key={msg.id}
             style={[styles.messageWrapper, msg.isCustomer ? styles.customerWrapper : styles.workerWrapper]}
           >
+            {msg.isCustomer && (
+              <Image
+                source={{ uri: customerPhoto }}
+                style={styles.messageAvatar}
+              />
+            )}
             {msg.type === 'image' && msg.mediaUri ? (
               <View style={[styles.messageBubble, msg.isCustomer ? styles.customerMessage : styles.workerMessage]}>
                 <Image source={{ uri: msg.mediaUri }} style={styles.messageImage} />
@@ -266,6 +273,15 @@ export function WorkerMessages({ context }: { context: AppContextType }) {
                 </Text>
               </View>
             )}
+            {!msg.isCustomer && (
+              <Image
+                source={{ 
+                  uri: context.currentUser?.profilePicture || 
+                  'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (context.currentUser?.name || 'Worker')
+                }}
+                style={styles.messageAvatar}
+              />
+            )}
           </View>
         ))}
       </ScrollView>
@@ -293,9 +309,14 @@ style={styles.attachButton}
               style={styles.input}
               placeholder="Type a message..."
               value={message}
-              onChangeText={setMessage}
+              onChangeText={(text) => {
+                // Only allow letters, spaces, and basic punctuation
+                const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+                setMessage(cleaned);
+              }}
               multiline
               maxLength={500}
+              autoCapitalize="sentences"
             />
             <TouchableOpacity
               activeOpacity={1}
@@ -377,7 +398,7 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   headerInfo: { flex: 1 },
-  headerName: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  headerName: { color: '#fff', fontSize: 16, fontWeight: '500' },
   onlineIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -395,12 +416,23 @@ const styles = StyleSheet.create({
   messagesContent: { padding: 16, gap: 12 },
   messageWrapper: {
     maxWidth: '75%',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 8,
   },
   customerWrapper: {
     alignSelf: 'flex-start',
   },
   workerWrapper: {
     alignSelf: 'flex-end',
+    flexDirection: 'row-reverse',
+  },
+  messageAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   messageBubble: {
     borderRadius: 16,
@@ -513,7 +545,7 @@ const styles = StyleSheet.create({
   },
   recordingText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#ef4444',
   },
   stopButton: {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { AppContextType } from '../../types';
 
 export function WorkerProfileView({ context }: { context: AppContextType }) {
@@ -31,7 +32,7 @@ export function WorkerProfileView({ context }: { context: AppContextType }) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('bidding')}>
-            <Text style={styles.backButton}>←</Text>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Worker Profile</Text>
         </View>
@@ -112,19 +113,17 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { backgroundColor: '#006600', padding: 24, paddingTop: 40, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
   headerTop: { flexDirection: 'row', alignItems: 'center' },
-  backButton: { color: '#fff', fontSize: 24, marginRight: 12 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
   content: { padding: 16 },
   profileCard: { backgroundColor: '#fff', borderRadius: 12, padding: 24, alignItems: 'center', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
   avatar: { width: 80, height: 80, borderRadius: 40, borderWidth: 4, borderColor: '#006600', marginBottom: 16 },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  workerName: { fontSize: 24, fontWeight: '600' },
+  workerName: { fontSize: 24, fontWeight: '500' },
   verifiedBadge: { backgroundColor: '#00A86B', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 4 },
-  verifiedText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  verifiedText: { color: '#fff', fontSize: 12, fontWeight: '500' },
   statsRow: { flexDirection: 'row', gap: 16 },
   stat: { fontSize: 14, color: '#666' },
   skillsCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
-  cardTitle: { fontSize: 18, fontWeight: '600', marginBottom: 12 },
+  cardTitle: { fontSize: 18, fontWeight: '500', marginBottom: 12 },
   skillsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   skillTag: { backgroundColor: '#f0f9f0', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 8 },
   skillText: { color: '#006600', fontWeight: '500' },
@@ -140,7 +139,7 @@ const styles = StyleSheet.create({
   button: { flex: 1, borderRadius: 12, padding: 16, alignItems: 'center' },
   messageButton: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd' },
   hireButton: { backgroundColor: '#006600' },
-  buttonText: { fontSize: 16, fontWeight: '600' },
+  buttonText: { fontSize: 16, fontWeight: '500' },
   messageButtonText: { color: '#006600' },
   hireButtonText: { color: '#fff' },
   errorText: { textAlign: 'center', marginTop: 100, fontSize: 16, color: '#666' },

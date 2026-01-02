@@ -78,8 +78,13 @@ export function EditAddress({ context }: { context: AppContextType }) {
           <TextInput
             style={styles.input}
             value={city}
-            onChangeText={setCity}
+            onChangeText={(text) => {
+              // Only allow letters and spaces
+              const cleaned = text.replace(/[^a-zA-Z\s]/g, '');
+              setCity(cleaned);
+            }}
             placeholder="Enter your city"
+            autoCapitalize="words"
           />
         </View>
 
@@ -88,7 +93,11 @@ export function EditAddress({ context }: { context: AppContextType }) {
           <TextInput
             style={styles.input}
             value={postalCode}
-            onChangeText={setPostalCode}
+            onChangeText={(text) => {
+              // Only allow numbers
+              const cleaned = text.replace(/[^0-9]/g, '');
+              setPostalCode(cleaned);
+            }}
             placeholder="Enter postal code"
             keyboardType="numeric"
           />
@@ -135,7 +144,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   content: {
     padding: 24,
@@ -170,7 +179,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   confirmationContainer: {
     flex: 1,
@@ -193,7 +202,7 @@ const styles = StyleSheet.create({
   },
   confirmationTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
   },

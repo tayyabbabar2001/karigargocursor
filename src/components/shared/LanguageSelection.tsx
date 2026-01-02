@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   content: {
     padding: 24,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   },
   languageName: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 4,
   },
@@ -233,6 +233,6 @@ const styles = StyleSheet.create({
   continueButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });

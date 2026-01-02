@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500' },
   tabsContainer: {
     flexDirection: 'row',
     backgroundColor: '#fff',
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#666',
   },
   tabTextActive: {
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  jobTitle: { fontSize: 16, fontWeight: '600', flex: 1 },
+  jobTitle: { fontSize: 16, fontWeight: '500', flex: 1 },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   },
   statusActive: { backgroundColor: '#00A86B' },
   statusAccepted: { backgroundColor: '#3b82f6' },
-  statusText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  statusText: { color: '#fff', fontSize: 12, fontWeight: '500' },
   customerName: { fontSize: 14, color: '#666', marginBottom: 4 },
   location: { fontSize: 12, color: '#999' },
   customerRow: {
@@ -300,14 +300,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  customerAvatarText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  customerAvatarText: { color: '#fff', fontSize: 14, fontWeight: '500' },
   ratingContainer: {
     flexDirection: 'row',
     gap: 4,
     marginTop: 8,
   },
   jobAmount: { alignItems: 'flex-end' },
-  amount: { fontSize: 16, fontWeight: '600', color: '#006600', marginBottom: 4 },
+  amount: { fontSize: 16, fontWeight: '500', color: '#006600', marginBottom: 4 },
   date: { fontSize: 12, color: '#999' },
   jobActions: {
     flexDirection: 'row',
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
   },
-  actionText: { color: '#006600', fontSize: 14, fontWeight: '600' },
+  actionText: { color: '#006600', fontSize: 14, fontWeight: '500' },
   doneButton: {
     flex: 1,
     flexDirection: 'row',
@@ -338,5 +338,5 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
   },
-  doneText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  doneText: { color: '#fff', fontSize: 14, fontWeight: '500' },
 });

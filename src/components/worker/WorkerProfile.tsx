@@ -11,8 +11,11 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
     email: 'ali@example.com',
     phone: '0300-1234567',
     skill: 'Electrician',
+    skills: ['Electrician'],
     city: 'Karachi',
   };
+  
+  const workerSkills = user.skills || (user.skill ? [user.skill] : []);
 
   const handleLogout = () => {
     context.setCurrentUser(null);
@@ -44,7 +47,10 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
         {/* User Info */}
         <View style={styles.userInfo}>
           <Image
-            source={{ uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ali' }}
+            source={user.profilePicture 
+              ? { uri: user.profilePicture }
+              : { uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (user.name || 'Ali') }
+            }
             style={styles.avatar}
           />
           <View style={styles.userDetails}>
@@ -54,7 +60,7 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
                 <Ionicons name="checkmark-circle" size={20} color="#10b981" />
               )}
             </View>
-            <Text style={styles.userSkill}>{user.skill}</Text>
+            <Text style={styles.userSkill}>{workerSkills.join(', ')}</Text>
           </View>
         </View>
       </View>
@@ -123,8 +129,8 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
               <Ionicons name="briefcase-outline" size={20} color="#666" />
             </View>
             <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Primary Skill</Text>
-              <Text style={styles.infoValue}>{user.skill}</Text>
+              <Text style={styles.infoLabel}>Registered Skills</Text>
+              <Text style={styles.infoValue}>{workerSkills.length > 0 ? workerSkills.join(', ') : (user.skill || 'Not set')}</Text>
             </View>
           </View>
 
@@ -241,7 +247,7 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 24,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500' },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -261,7 +267,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 4,
   },
-  userName: { color: '#fff', fontSize: 18, fontWeight: '600' },
+  userName: { color: '#fff', fontSize: 18, fontWeight: '500' },
   userSkill: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 14 },
   editButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
@@ -298,9 +304,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   verificationText: { flex: 1 },
-  verificationTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
+  verificationTitle: { fontSize: 16, fontWeight: '500', marginBottom: 4 },
   verificationSubtitle: { fontSize: 14 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 16 },
+  sectionTitle: { fontSize: 18, fontWeight: '500', marginBottom: 16 },
   infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -345,7 +351,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  documentTitle: { fontSize: 14, fontWeight: '600', marginBottom: 2 },
+  documentTitle: { fontSize: 14, fontWeight: '500', marginBottom: 2 },
   documentSubtitle: { fontSize: 12, color: '#666' },
   verifiedBadge: {
     flexDirection: 'row',
@@ -356,7 +362,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
   },
-  verifiedText: { color: '#065f46', fontSize: 12, fontWeight: '600' },
+  verifiedText: { color: '#065f46', fontSize: 12, fontWeight: '500' },
   uploadButton: {
     borderWidth: 1,
     borderColor: '#e5e7eb',
@@ -364,7 +370,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 12,
   },
-  uploadText: { color: '#333', fontSize: 14, fontWeight: '600' },
+  uploadText: { color: '#333', fontSize: 14, fontWeight: '500' },
   actionsRow: {
     flexDirection: 'row',
     gap: 12,
@@ -382,7 +388,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     minHeight: 48,
   },
-  actionText: { color: '#006600', fontSize: 14, fontWeight: '600', flexShrink: 0 },
+  actionText: { color: '#006600', fontSize: 14, fontWeight: '500', flexShrink: 0 },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -397,5 +403,5 @@ const styles = StyleSheet.create({
     minHeight: 48,
     marginTop: 12,
   },
-  logoutText: { color: '#ef4444', fontSize: 14, fontWeight: '600', flexShrink: 0 },
+  logoutText: { color: '#ef4444', fontSize: 14, fontWeight: '500', flexShrink: 0 },
 });

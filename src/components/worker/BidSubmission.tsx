@@ -66,7 +66,11 @@ export function BidSubmission({ context }: { context: AppContextType }) {
               style={styles.input}
               placeholder="Enter your bid amount"
               value={bidAmount}
-              onChangeText={setBidAmount}
+              onChangeText={(text) => {
+                // Only allow numbers
+                const cleaned = text.replace(/[^0-9]/g, '');
+                setBidAmount(cleaned);
+              }}
               keyboardType="numeric"
             />
           </View>
@@ -81,7 +85,11 @@ export function BidSubmission({ context }: { context: AppContextType }) {
               style={styles.input}
               placeholder="e.g., 2 hours, 1 day"
               value={completionTime}
-              onChangeText={setCompletionTime}
+              onChangeText={(text) => {
+                // Only allow letters, spaces, numbers for time, and basic punctuation
+                const cleaned = text.replace(/[^a-zA-Z0-9\s.,]/g, '');
+                setCompletionTime(cleaned);
+              }}
             />
           </View>
 
@@ -90,10 +98,15 @@ export function BidSubmission({ context }: { context: AppContextType }) {
             style={styles.textArea}
             placeholder="Introduce yourself and explain why you're the right person for this job..."
             value={message}
-            onChangeText={setMessage}
+            onChangeText={(text) => {
+              // Only allow letters, spaces, and basic punctuation
+              const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+              setMessage(cleaned);
+            }}
             multiline
             numberOfLines={4}
             maxLength={300}
+            autoCapitalize="sentences"
           />
           <Text style={styles.charCount}>{message.length}/300 characters</Text>
         </View>
@@ -141,7 +154,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500' },
   jobInfo: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     margin: 20,
@@ -149,7 +162,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
   },
-  jobTitle: { color: '#fff', fontSize: 16, fontWeight: '600', marginBottom: 4 },
+  jobTitle: { color: '#fff', fontSize: 16, fontWeight: '500', marginBottom: 4 },
   jobBudget: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 14 },
   content: { padding: 20, gap: 16 },
   card: {
@@ -162,7 +175,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#333' },
+  label: { fontSize: 14, fontWeight: '500', marginBottom: 8, color: '#333' },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -195,7 +208,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
   },
-  tipsTitle: { fontSize: 16, fontWeight: '600', color: '#1e3a8a', marginBottom: 12 },
+  tipsTitle: { fontSize: 16, fontWeight: '500', color: '#1e3a8a', marginBottom: 12 },
   tipsList: { gap: 8 },
   tipItem: { fontSize: 14, color: '#1e40af' },
   submitButton: {
@@ -207,7 +220,7 @@ const styles = StyleSheet.create({
   submitButtonDisabled: {
     backgroundColor: '#9ca3af',
   },
-  submitButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  submitButtonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
   cancelButton: {
     borderWidth: 1,
     borderColor: '#e5e7eb',
@@ -216,7 +229,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  cancelButtonText: { color: '#333', fontSize: 16, fontWeight: '600' },
+  cancelButtonText: { color: '#333', fontSize: 16, fontWeight: '500' },
   centered: {
     flex: 1,
     justifyContent: 'center',
@@ -232,6 +245,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  successTitle: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 8 },
+  successTitle: { fontSize: 20, fontWeight: '500', color: '#333', marginBottom: 8 },
   successText: { fontSize: 14, color: '#666', textAlign: 'center' },
 });

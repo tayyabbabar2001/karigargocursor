@@ -11,7 +11,8 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [password, setPassword] = useState('');
-  const [skill, setSkill] = useState('');
+  const [firstSkill, setFirstSkill] = useState('');
+  const [secondSkill, setSecondSkill] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [signupName, setSignupName] = useState('');
@@ -22,6 +23,7 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
   const [signupCnic, setSignupCnic] = useState('');
   const [signupCnicFront, setSignupCnicFront] = useState<string | null>(null);
   const [signupCnicBack, setSignupCnicBack] = useState<string | null>(null);
+  const [signupProfilePicture, setSignupProfilePicture] = useState<string | null>(null);
   const [showSignupOtp, setShowSignupOtp] = useState(false);
   const [signupOtp, setSignupOtp] = useState('');
 
@@ -57,17 +59,24 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
   };
 
   const handleSignup = () => {
-    if (!signupName || !signupEmail || !signupPhone || !signupPassword || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity) {
-      Alert.alert('Error', 'Please fill all required fields including CNIC details.');
+    if (!signupName || !signupEmail || !signupPhone || !signupPassword || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture) {
+      Alert.alert('Error', 'Please fill all required fields including Profile Picture, CNIC details and at least First Skill.');
       return;
     }
+    // Build skills array - only include skills that are selected
+    const skills: string[] = [];
+    if (firstSkill) skills.push(firstSkill);
+    if (secondSkill && secondSkill !== firstSkill) skills.push(secondSkill);
+    
     context.setCurrentUser({
       name: signupName,
       email: signupEmail,
       phone: signupPhone,
       cnic: signupCnic,
-      skill: skill,
+      skills: skills,
+      skill: firstSkill, // Keep for backward compatibility
       city: signupCity,
+      profilePicture: signupProfilePicture || undefined,
       id: 'worker-' + Date.now(),
       role: 'worker',
     });
@@ -96,6 +105,58 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
         setSignupCnicBack(result.assets[0].uri);
       }
     }
+  };
+
+  const handlePickProfilePicture = async () => {
+    // Request camera permissions
+    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status: libraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (cameraStatus !== 'granted' && libraryStatus !== 'granted') {
+      Alert.alert('Permission needed', 'Please grant camera and photo library permissions to upload your profile picture');
+      return;
+    }
+
+    // Show action sheet to choose camera or library
+    Alert.alert(
+      'Upload Profile Picture',
+      'Take a selfie or choose from gallery',
+      [
+        {
+          text: 'Camera (Selfie)',
+          onPress: async () => {
+            const result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1, 1], // Square for profile picture
+              quality: 0.8,
+            });
+            if (!result.canceled) {
+              setSignupProfilePicture(result.assets[0].uri);
+            }
+          },
+        },
+        {
+          text: 'Photo Library',
+          onPress: async () => {
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1, 1], // Square for profile picture
+              quality: 0.8,
+            });
+            if (!result.canceled) {
+              setSignupProfilePicture(result.assets[0].uri);
+            }
+          },
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
@@ -244,6 +305,31 @@ style={styles.loginButton}
         ) : (
           <View style={styles.form}>
             <View style={styles.inputGroup}>
+              <Text style={styles.label}>Profile Picture <Text style={styles.required}>*</Text></Text>
+              <Text style={styles.profilePictureHint}>Please upload a clear face selfie</Text>
+              <TouchableOpacity activeOpacity={1} style={styles.profilePictureContainer} onPress={handlePickProfilePicture}>
+                {signupProfilePicture ? (
+                  <View style={styles.profilePicturePreview}>
+                    <Image source={{ uri: signupProfilePicture }} style={styles.profilePictureImage} />
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      style={styles.removeProfilePictureButton}
+                      onPress={() => setSignupProfilePicture(null)}
+                    >
+                      <Ionicons name="close-circle" size={24} color="#c00" />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.profilePicturePlaceholder}>
+                    <Ionicons name="camera" size={48} color="#006600" />
+                    <Text style={styles.profilePicturePlaceholderText}>Tap to add profile picture</Text>
+                    <Text style={styles.profilePicturePlaceholderSubtext}>Clear face selfie required</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.inputGroup}>
               <Text style={styles.label}>Full Name <Text style={styles.required}>*</Text></Text>
               <View style={styles.inputWrapper}>
                 <Ionicons name="person-outline" size={16} color="#999" style={styles.inputIcon} />
@@ -251,7 +337,12 @@ style={styles.loginButton}
                   style={styles.input}
                   placeholder="Enter your name"
                   value={signupName}
-                  onChangeText={setSignupName}
+                  onChangeText={(text) => {
+                    // Only allow letters and spaces
+                    const cleaned = text.replace(/[^a-zA-Z\s]/g, '');
+                    setSignupName(cleaned);
+                  }}
+                  autoCapitalize="words"
                 />
               </View>
             </View>
@@ -279,7 +370,11 @@ style={styles.loginButton}
                   style={styles.input}
                   placeholder="03XX-XXXXXXX"
                   value={signupPhone}
-                  onChangeText={setSignupPhone}
+                  onChangeText={(text) => {
+                    // Only allow numbers and dash
+                    const cleaned = text.replace(/[^0-9-]/g, '');
+                    setSignupPhone(cleaned);
+                  }}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -324,7 +419,11 @@ style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
                       style={styles.input}
                       placeholder="Enter 6-digit code"
                       value={signupOtp}
-                      onChangeText={setSignupOtp}
+                      onChangeText={(text) => {
+                        // Only allow numbers
+                        const cleaned = text.replace(/[^0-9]/g, '');
+                        setSignupOtp(cleaned);
+                      }}
                       keyboardType="number-pad"
                       maxLength={6}
                     />
@@ -341,14 +440,20 @@ style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
             )}
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Primary Skill <Text style={styles.required}>*</Text></Text>
+              <Text style={styles.label}>First Skill <Text style={styles.required}>*</Text></Text>
               <View style={styles.pickerWrapper}>
                 <Picker
-                  selectedValue={skill}
-                  onValueChange={setSkill}
+                  selectedValue={firstSkill}
+                  onValueChange={(value) => {
+                    setFirstSkill(value);
+                    // Reset second skill if it matches the new first skill
+                    if (value === secondSkill) {
+                      setSecondSkill('');
+                    }
+                  }}
                   style={styles.picker}
                 >
-                  <Picker.Item label="Select your skill" value="" />
+                  <Picker.Item label="Select your first skill" value="" />
                   <Picker.Item label="Electrician" value="Electrician" />
                   <Picker.Item label="Plumber" value="Plumber" />
                   <Picker.Item label="Carpenter" value="Carpenter" />
@@ -360,6 +465,32 @@ style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
             </View>
 
             <View style={styles.inputGroup}>
+              <Text style={styles.label}>Second Skill (Optional)</Text>
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  selectedValue={secondSkill}
+                  onValueChange={(value) => {
+                    // Prevent selecting the same skill as first skill
+                    if (value !== firstSkill) {
+                      setSecondSkill(value);
+                    }
+                  }}
+                  style={styles.picker}
+                  enabled={!!firstSkill}
+                >
+                  <Picker.Item label={firstSkill ? "Select your second skill" : "Select first skill first"} value="" />
+                  {firstSkill !== 'Electrician' && <Picker.Item label="Electrician" value="Electrician" />}
+                  {firstSkill !== 'Plumber' && <Picker.Item label="Plumber" value="Plumber" />}
+                  {firstSkill !== 'Carpenter' && <Picker.Item label="Carpenter" value="Carpenter" />}
+                  {firstSkill !== 'Painter' && <Picker.Item label="Painter" value="Painter" />}
+                  {firstSkill !== 'AC Technician' && <Picker.Item label="AC Technician" value="AC Technician" />}
+                  {firstSkill !== 'Cleaner' && <Picker.Item label="Cleaner" value="Cleaner" />}
+                </Picker>
+              </View>
+              <Text style={styles.skillHint}>You can register for maximum 2 skills only</Text>
+            </View>
+
+            <View style={styles.inputGroup}>
               <Text style={styles.label}>CNIC Number <Text style={styles.required}>*</Text></Text>
               <View style={styles.inputWrapper}>
                 <Ionicons name="card-outline" size={16} color="#999" style={styles.inputIcon} />
@@ -367,7 +498,11 @@ style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
                   style={styles.input}
                   placeholder="XXXXX-XXXXXXX-X"
                   value={signupCnic}
-                  onChangeText={setSignupCnic}
+                  onChangeText={(text) => {
+                    // Only allow numbers and dash
+                    const cleaned = text.replace(/[^0-9-]/g, '');
+                    setSignupCnic(cleaned);
+                  }}
                   keyboardType="number-pad"
                   maxLength={15}
                 />
@@ -418,9 +553,9 @@ style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
 
             <TouchableOpacity
               activeOpacity={1}
-style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity) && styles.loginButtonDisabled]}
+style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture) && styles.loginButtonDisabled]}
               onPress={handleVerifySignupOtp}
-              disabled={!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity}
+              disabled={!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture}
             >
               <Text style={styles.loginButtonText}>Verify & Create Account</Text>
             </TouchableOpacity>
@@ -483,7 +618,7 @@ const styles = StyleSheet.create({
   },
   activeTabText: {
     color: '#006600',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   form: {
     gap: 16,
@@ -528,7 +663,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   divider: {
     flexDirection: 'row',
@@ -564,7 +699,7 @@ const styles = StyleSheet.create({
   otpButtonText: {
     color: '#006600',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   otpHint: {
     color: '#666',
@@ -576,6 +711,61 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 8,
+  },
+  profilePictureHint: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 8,
+  },
+  profilePictureContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  profilePicturePlaceholder: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 2,
+    borderColor: '#006600',
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  profilePicturePlaceholderText: {
+    fontSize: 12,
+    color: '#006600',
+    fontWeight: '500',
+    textAlign: 'center',
+    paddingHorizontal: 8,
+  },
+  profilePicturePlaceholderSubtext: {
+    fontSize: 10,
+    color: '#999',
+    textAlign: 'center',
+    paddingHorizontal: 8,
+  },
+  profilePicturePreview: {
+    position: 'relative',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#006600',
+  },
+  profilePictureImage: {
+    width: '100%',
+    height: '100%',
+  },
+  removeProfilePictureButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    borderRadius: 12,
   },
   pickerWrapper: {
     borderWidth: 1,
@@ -650,5 +840,11 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 8,
     resizeMode: 'cover',
+  },
+  skillHint: {
+    color: '#666',
+    fontSize: 12,
+    marginTop: 4,
+    fontStyle: 'italic',
   },
 });

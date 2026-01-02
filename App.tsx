@@ -16,6 +16,7 @@ import { LiveJobTracking } from './src/components/customer/LiveJobTracking';
 import { PaymentScreen } from './src/components/customer/PaymentScreen';
 import { RatingReview } from './src/components/customer/RatingReview';
 import { CustomerProfile } from './src/components/customer/CustomerProfile';
+import { CustomerMyJobs } from './src/components/customer/CustomerMyJobs';
 
 // Worker screens
 import { WorkerLogin } from './src/components/worker/WorkerLogin';
@@ -76,6 +77,8 @@ function AppContent() {
         return <RatingReview context={context} />;
       case 'customer-profile':
         return <CustomerProfile context={context} />;
+      case 'customer-my-jobs':
+        return <CustomerMyJobs context={context} />;
       
       // Worker screens
       case 'worker-login':

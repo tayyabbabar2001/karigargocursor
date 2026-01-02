@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   headerContent: { flex: 1 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500' },
   headerSubtitle: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 14, marginTop: 4 },
   mapContainer: {
     flex: 1,
@@ -278,9 +278,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#006600',
   },
   markerText: {
-    fontSize: 10,
+    fontSize: 12,
     color: '#333',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   routeLine: {
     position: 'absolute',
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   statusText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   navButton: {
     position: 'absolute',
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
     borderColor: '#006600',
   },
   customerDetails: { flex: 1 },
-  customerName: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
+  customerName: { fontSize: 18, fontWeight: '500', marginBottom: 4 },
   customerLocation: { fontSize: 14, color: '#666', marginBottom: 8 },
   distanceRow: {
     flexDirection: 'row',
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
   },
-  chatButtonText: { color: '#006600', fontSize: 16, fontWeight: '600' },
+  chatButtonText: { color: '#006600', fontSize: 16, fontWeight: '500' },
   callButton: {
     flex: 1,
     flexDirection: 'row',
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
   },
-  callButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  callButtonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
   arrivedButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
   },
-  arrivedButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  arrivedButtonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
   startButton: {
     backgroundColor: '#f97316',
     padding: 16,
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  startButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  startButtonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
   completeButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -436,14 +436,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
   },
-  completeButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  completeButtonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
   taskDetails: {
     backgroundColor: '#f9fafb',
     padding: 16,
     borderRadius: 12,
     marginTop: 16,
   },
-  taskTitle: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
+  taskTitle: { fontSize: 16, fontWeight: '500', marginBottom: 8 },
   taskDescription: { fontSize: 14, color: '#666', marginBottom: 12 },
   paymentRow: {
     flexDirection: 'row',
@@ -451,5 +451,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   paymentLabel: { fontSize: 14, color: '#666' },
-  paymentAmount: { fontSize: 16, fontWeight: '600', color: '#006600' },
+  paymentAmount: { fontSize: 16, fontWeight: '500', color: '#006600' },
 });

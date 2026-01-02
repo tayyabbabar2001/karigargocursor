@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { AppContextType } from '../../types';
 
 export function LiveJobTracking({ context }: { context: AppContextType }) {
@@ -46,7 +47,7 @@ export function LiveJobTracking({ context }: { context: AppContextType }) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
-            <Text style={styles.backButton}>←</Text>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <View style={styles.headerText}>
             <Text style={styles.headerTitle}>Live Job Tracking</Text>
@@ -110,28 +111,26 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { backgroundColor: '#006600', padding: 24, paddingTop: 40 },
   headerTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  backButton: { color: '#fff', fontSize: 24, marginRight: 12 },
-  headerText: { flex: 1 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500' },
   headerSubtitle: { color: 'rgba(255, 255, 255, 0.8)', marginTop: 4 },
   mapContainer: { height: 300, backgroundColor: '#e0e0e0' },
   mapPlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  mapText: { fontSize: 48, marginBottom: 12 },
+  mapText: { fontSize: 24, marginBottom: 12 },
   mapLabel: { fontSize: 18, color: '#666', marginBottom: 4 },
   mapSubtext: { fontSize: 14, color: '#999' },
   content: { padding: 16 },
   statusCard: { borderRadius: 12, padding: 20, marginBottom: 16, alignItems: 'center' },
-  statusText: { color: '#fff', fontSize: 18, fontWeight: '600', marginBottom: 8 },
-  timeText: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginBottom: 4 },
+  statusText: { color: '#fff', fontSize: 18, fontWeight: '500', marginBottom: 8 },
+  timeText: { color: '#fff', fontSize: 24, fontWeight: '500', marginBottom: 4 },
   distanceText: { color: 'rgba(255, 255, 255, 0.9)', fontSize: 14 },
   infoCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
-  workerName: { fontSize: 18, fontWeight: '600', marginBottom: 8 },
+  workerName: { fontSize: 18, fontWeight: '500', marginBottom: 8 },
   taskTitle: { fontSize: 16, color: '#333', marginBottom: 8 },
   taskLocation: { fontSize: 14, color: '#666' },
   buttonRow: { flexDirection: 'row', gap: 12, marginBottom: 12 },
   button: { flex: 1, backgroundColor: '#006600', borderRadius: 12, padding: 16, alignItems: 'center' },
   callButton: { backgroundColor: '#10b981' },
   completeButton: { marginTop: 8 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
 });
 

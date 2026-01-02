@@ -64,7 +64,11 @@ export function EditPhone({ context }: { context: AppContextType }) {
           <TextInput
             style={styles.input}
             value={phone}
-            onChangeText={setPhone}
+            onChangeText={(text) => {
+              // Only allow numbers and dash
+              const cleaned = text.replace(/[^0-9-]/g, '');
+              setPhone(cleaned);
+            }}
             placeholder="03XX-XXXXXXX"
             keyboardType="phone-pad"
           />
@@ -108,7 +112,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   content: {
     padding: 24,
@@ -143,7 +147,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   confirmationContainer: {
     flex: 1,
@@ -166,7 +170,7 @@ const styles = StyleSheet.create({
   },
   confirmationTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
   },

@@ -39,7 +39,11 @@ export function ChatScreen({ context }: { context: AppContextType }) {
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const workerName = context.selectedWorker?.name || context.selectedBid?.workerName || 'Worker';
-  const workerPhoto = context.selectedWorker?.photo || context.selectedBid?.workerPhoto || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Worker';
+  const workerPhoto = context.selectedWorker?.profilePicture || 
+                      context.selectedWorker?.photo || 
+                      context.selectedBid?.workerPhoto || 
+                      context.selectedBid?.workerProfilePicture ||
+                      'https://api.dicebear.com/7.x/avataaars/svg?seed=' + workerName;
 
   const handleSend = () => {
     if (message.trim()) {
@@ -226,6 +230,12 @@ export function ChatScreen({ context }: { context: AppContextType }) {
             key={msg.id}
             style={[styles.messageWrapper, msg.isCustomer ? styles.customerWrapper : styles.workerWrapper]}
           >
+            {!msg.isCustomer && (
+              <Image
+                source={{ uri: workerPhoto }}
+                style={styles.messageAvatar}
+              />
+            )}
             {msg.type === 'image' && msg.mediaUri ? (
               <View style={[styles.messageBubble, msg.isCustomer ? styles.customerMessage : styles.workerMessage]}>
                 <Image source={{ uri: msg.mediaUri }} style={styles.messageImage} />
@@ -266,6 +276,15 @@ export function ChatScreen({ context }: { context: AppContextType }) {
                 </Text>
               </View>
             )}
+            {msg.isCustomer && (
+              <Image
+                source={{ 
+                  uri: context.currentUser?.profilePicture || 
+                  'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (context.currentUser?.name || 'Customer')
+                }}
+                style={styles.messageAvatar}
+              />
+            )}
           </View>
         ))}
       </ScrollView>
@@ -304,9 +323,14 @@ style={styles.attachButton}
               style={styles.input}
               placeholder="Type a message..."
               value={message}
-              onChangeText={setMessage}
+              onChangeText={(text) => {
+                // Only allow letters, spaces, and basic punctuation
+                const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+                setMessage(cleaned);
+              }}
               multiline
               maxLength={500}
+              autoCapitalize="sentences"
             />
             <TouchableOpacity
               activeOpacity={1}
@@ -397,7 +421,7 @@ const styles = StyleSheet.create({
   headerName: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   onlineIndicator: {
     flexDirection: 'row',
@@ -425,12 +449,23 @@ const styles = StyleSheet.create({
   messageWrapper: {
     maxWidth: '75%',
     marginBottom: 4,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 8,
   },
   customerWrapper: {
     alignSelf: 'flex-end',
+    flexDirection: 'row-reverse',
   },
   workerWrapper: {
     alignSelf: 'flex-start',
+  },
+  messageAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   messageBubble: {
     padding: 12,
@@ -486,7 +521,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   timestamp: {
-    fontSize: 10,
+    fontSize: 12,
     color: '#999',
     marginTop: 4,
     alignSelf: 'flex-end',
@@ -510,7 +545,7 @@ const styles = StyleSheet.create({
   completeButtonText: {
     color: '#006600',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -566,7 +601,7 @@ const styles = StyleSheet.create({
   recordingText: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#c00',
   },
   stopButton: {

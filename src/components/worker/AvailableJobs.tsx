@@ -63,9 +63,19 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
   const [sortBy, setSortBy] = useState('all');
   const [activeTab, setActiveTab] = useState('home');
 
+  // Get worker's skills from currentUser
+  const worker = context.currentUser;
+  const workerSkills = worker?.skills || (worker?.skill ? [worker.skill] : []);
+
+  // Filter jobs based on worker's registered skills
+  let skillFilteredJobs = availableJobs.filter(job => 
+    workerSkills.length > 0 && workerSkills.includes(job.category)
+  );
+
+  // Apply category filter on top of skill filter
   const filteredJobs = sortBy === 'all' 
-    ? availableJobs 
-    : availableJobs.filter(job => job.category === sortBy);
+    ? skillFilteredJobs 
+    : skillFilteredJobs.filter(job => job.category === sortBy);
 
   const handleViewDetails = (job: Task) => {
     context.setCurrentTask(job);
@@ -82,12 +92,24 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
         <View style={styles.headerContent}>
           <View>
             <Text style={styles.welcomeText}>Welcome back,</Text>
-            <Text style={styles.userName}>Ali Khan 👋</Text>
+            <Text style={styles.userName}>{worker?.name || 'Worker'} 👋</Text>
+            {workerSkills.length > 0 && (
+              <Text style={styles.skillsText}>Skills: {workerSkills.join(', ')}</Text>
+            )}
           </View>
           <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('worker-profile')}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>AK</Text>
-            </View>
+            {worker?.profilePicture ? (
+              <Image
+                source={{ uri: worker.profilePicture }}
+                style={styles.avatarImage}
+              />
+            ) : (
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>
+                  {(worker?.name || 'Worker').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -95,7 +117,7 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Available</Text>
-            <Text style={styles.statValue}>{availableJobs.length}</Text>
+            <Text style={styles.statValue}>{skillFilteredJobs.length}</Text>
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Bids Sent</Text>
@@ -141,11 +163,18 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
         scrollEventThrottle={16}
         >
         <View style={styles.jobsHeader}>
-          <Text style={styles.jobsTitle}>Nearby Jobs</Text>
+          <Text style={styles.jobsTitle}>Jobs for Your Skills</Text>
           <Text style={styles.jobsCount}>{filteredJobs.length} jobs</Text>
         </View>
 
-        {filteredJobs.map((job) => (
+        {filteredJobs.length === 0 ? (
+          <View style={styles.noJobsContainer}>
+            <Ionicons name="briefcase-outline" size={64} color="#ccc" />
+            <Text style={styles.noJobsText}>No jobs available</Text>
+            <Text style={styles.noJobsSubtext}>Jobs matching your registered skills will appear here</Text>
+          </View>
+        ) : (
+          filteredJobs.map((job) => (
           <TouchableOpacity
             activeOpacity={1}
             key={job.id}
@@ -195,7 +224,8 @@ style={styles.viewButton}
               </View>
             </View>
           </TouchableOpacity>
-        ))}
+          ))
+        )}
       </ScrollView>
 
       {/* Bottom Navigation */}
@@ -259,7 +289,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -270,7 +300,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   welcomeText: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 14 },
-  userName: { color: '#fff', fontSize: 20, fontWeight: '600' },
+  userName: { color: '#fff', fontSize: 20, fontWeight: '500' },
   avatar: {
     width: 48,
     height: 48,
@@ -281,7 +311,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  avatarText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  avatarText: { color: '#fff', fontSize: 18, fontWeight: '500' },
+  avatarImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
   statsContainer: {
     flexDirection: 'row',
     gap: 12,
@@ -293,7 +330,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   statLabel: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 12, marginBottom: 4 },
-  statValue: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  statValue: { color: '#fff', fontSize: 20, fontWeight: '500' },
   filterContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -316,7 +353,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  jobsTitle: { fontSize: 18, fontWeight: '600', color: '#333' },
+  jobsTitle: { fontSize: 18, fontWeight: '500', color: '#333' },
   jobsCount: { fontSize: 14, color: '#666' },
   jobCard: {
     backgroundColor: '#fff',
@@ -338,14 +375,14 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  jobTitle: { fontSize: 16, fontWeight: '600', flex: 1 },
+  jobTitle: { fontSize: 16, fontWeight: '500', flex: 1 },
   categoryBadge: {
     backgroundColor: 'rgba(0, 102, 0, 0.1)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
   },
-  categoryText: { color: '#006600', fontSize: 12, fontWeight: '600' },
+  categoryText: { color: '#006600', fontSize: 12, fontWeight: '500' },
   jobDescription: { color: '#666', fontSize: 14, marginBottom: 12 },
   jobDetails: {
     flexDirection: 'row',
@@ -379,7 +416,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  customerAvatarText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  customerAvatarText: { color: '#fff', fontSize: 14, fontWeight: '500' },
   customerName: { color: '#666', fontSize: 14 },
   viewButton: {
     backgroundColor: '#006600',
@@ -387,7 +424,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 12,
   },
-  viewButtonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  viewButtonText: { color: '#fff', fontSize: 14, fontWeight: '500' },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -403,5 +440,28 @@ const styles = StyleSheet.create({
   },
   navItemActive: {},
   navText: { fontSize: 12, color: '#999' },
-  navTextActive: { color: '#006600', fontWeight: '600' },
+  navTextActive: { color: '#006600', fontWeight: '500' },
+  skillsText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  noJobsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 64,
+    paddingHorizontal: 32,
+  },
+  noJobsText: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#333',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  noJobsSubtext: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
 });

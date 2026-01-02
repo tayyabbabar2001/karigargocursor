@@ -98,11 +98,16 @@ export function WorkerReviewScreen({ context }: { context: AppContextType }) {
             style={styles.textArea}
             placeholder="Share your experience working with this customer..."
             value={feedback}
-            onChangeText={setFeedback}
+            onChangeText={(text) => {
+              // Only allow letters, spaces, and basic punctuation
+              const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+              setFeedback(cleaned);
+            }}
             multiline
             numberOfLines={5}
             maxLength={500}
             textAlignVertical="top"
+            autoCapitalize="sentences"
           />
           <Text style={styles.charCount}>{feedback.length}/500 characters</Text>
         </View>
@@ -129,7 +134,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600', textAlign: 'center' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500', textAlign: 'center' },
   content: { padding: 20, gap: 20 },
   card: {
     backgroundColor: '#fff',
@@ -152,11 +157,11 @@ const styles = StyleSheet.create({
     borderColor: '#f3f4f6',
     marginBottom: 16,
   },
-  customerName: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
+  customerName: { fontSize: 18, fontWeight: '500', marginBottom: 4 },
   customerLabel: { fontSize: 14, color: '#666' },
   ratingTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -176,7 +181,7 @@ const styles = StyleSheet.create({
   },
   feedbackTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 12,
   },
   textArea: {
@@ -206,7 +211,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   centered: {
     flex: 1,
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
   },

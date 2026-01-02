@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { AppContextType } from '../../types';
 
 export function BiddingScreen({ context }: { context: AppContextType }) {
@@ -19,7 +20,8 @@ export function BiddingScreen({ context }: { context: AppContextType }) {
     context.setSelectedWorker({
       id: bid.workerId,
       name: bid.workerName,
-      photo: bid.workerPhoto,
+      photo: bid.workerPhoto || bid.workerProfilePicture,
+      profilePicture: bid.workerProfilePicture || bid.workerPhoto,
       skills: [bid.skill],
       rating: bid.rating,
       totalJobs: 45,
@@ -34,7 +36,8 @@ export function BiddingScreen({ context }: { context: AppContextType }) {
     context.setSelectedWorker({
       id: bid.workerId,
       name: bid.workerName,
-      photo: bid.workerPhoto,
+      photo: bid.workerPhoto || bid.workerProfilePicture,
+      profilePicture: bid.workerProfilePicture || bid.workerPhoto,
       skills: [bid.skill],
       rating: bid.rating,
       totalJobs: 45,
@@ -59,7 +62,7 @@ export function BiddingScreen({ context }: { context: AppContextType }) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
-            <Text style={styles.backButton}>←</Text>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Bids on Your Task</Text>
@@ -80,7 +83,14 @@ export function BiddingScreen({ context }: { context: AppContextType }) {
         {sortedBids.map((bid) => (
           <View key={bid.id} style={styles.bidCard}>
             <View style={styles.bidHeader}>
-              <Image source={{ uri: bid.workerPhoto }} style={styles.avatar} />
+              <Image 
+                source={{ 
+                  uri: bid.workerPhoto || 
+                  (bid.workerProfilePicture) ||
+                  'https://api.dicebear.com/7.x/avataaars/svg?seed=' + bid.workerName
+                }} 
+                style={styles.avatar} 
+              />
               <View style={styles.bidInfo}>
                 <View style={styles.workerNameRow}>
                   <Text style={styles.workerName}>{bid.workerName}</Text>
@@ -148,18 +158,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  backButton: {
-    color: '#fff',
-    fontSize: 24,
-    marginRight: 12,
-  },
   headerTextContainer: {
     flex: 1,
   },
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   headerSubtitle: {
     color: 'rgba(255, 255, 255, 0.8)',
@@ -219,7 +224,7 @@ const styles = StyleSheet.create({
   },
   workerName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   verifiedBadge: {
     backgroundColor: '#00A86B',
@@ -255,7 +260,7 @@ const styles = StyleSheet.create({
   price: {
     color: '#006600',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   messageContainer: {
     backgroundColor: '#f5f5f5',
@@ -283,14 +288,14 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#333',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   primaryButton: {
     backgroundColor: '#006600',
   },
   primaryButtonText: {
     color: '#fff',
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });
 

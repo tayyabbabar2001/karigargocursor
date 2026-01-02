@@ -118,11 +118,16 @@ export function RatingReview({ context }: { context: AppContextType }) {
             style={styles.reviewInput}
             placeholder="Share your experience with others..."
             value={review}
-            onChangeText={setReview}
+            onChangeText={(text) => {
+              // Only allow letters, spaces, and basic punctuation
+              const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+              setReview(cleaned);
+            }}
             multiline
             numberOfLines={5}
             textAlignVertical="top"
             maxLength={500}
+            autoCapitalize="sentences"
           />
           <Text style={styles.charCount}>{review.length}/500 characters</Text>
         </View>
@@ -190,7 +195,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   content: {
     padding: 24,
@@ -223,7 +228,7 @@ const styles = StyleSheet.create({
   },
   workerName: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 4,
   },
@@ -244,7 +249,7 @@ const styles = StyleSheet.create({
   },
   ratingTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 24,
     color: '#333',
   },
@@ -272,7 +277,7 @@ const styles = StyleSheet.create({
   },
   reviewTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: 16,
     color: '#333',
   },
@@ -332,7 +337,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   skipButton: {
     borderWidth: 1,
@@ -368,7 +373,7 @@ const styles = StyleSheet.create({
   },
   confirmationTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
   },

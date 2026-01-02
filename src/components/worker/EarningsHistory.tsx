@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 24,
     marginBottom: 16,
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '600' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500' },
   totalEarnings: {
     backgroundColor: '#006600',
     margin: 20,
@@ -172,14 +172,14 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   totalLabel: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 14, marginBottom: 8 },
-  totalAmount: { color: '#fff', fontSize: 32, fontWeight: 'bold', marginBottom: 16 },
+  totalAmount: { color: '#fff', fontSize: 24, fontWeight: '500', marginBottom: 16 },
   monthlyRow: {
     flexDirection: 'row',
     gap: 16,
   },
   monthlyItem: { flex: 1 },
   monthlyLabel: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 12, marginBottom: 4 },
-  monthlyValue: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  monthlyValue: { color: '#fff', fontSize: 16, fontWeight: '500' },
   content: { padding: 20, gap: 20 },
   statsRow: {
     flexDirection: 'row',
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   statLabel: { fontSize: 12, color: '#666', marginBottom: 4 },
-  statValue: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+  statValue: { fontSize: 20, fontWeight: '500', color: '#333' },
   chartCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  chartTitle: { fontSize: 18, fontWeight: '600', marginBottom: 12 },
+  chartTitle: { fontSize: 18, fontWeight: '500', marginBottom: 12 },
   chartSpacer: { height: 8 },
   chartContainer: {
     flexDirection: 'row',
@@ -270,8 +270,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  historyTitle: { fontSize: 18, fontWeight: '600' },
-  viewAll: { color: '#006600', fontSize: 14, fontWeight: '600' },
+  historyTitle: { fontSize: 18, fontWeight: '500' },
+  viewAll: { color: '#006600', fontSize: 14, fontWeight: '500' },
   historyList: { gap: 12 },
   historyItem: {
     flexDirection: 'row',
@@ -281,14 +281,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   historyInfo: { flex: 1 },
-  historyJobTitle: { fontSize: 14, fontWeight: '600', marginBottom: 4 },
+  historyJobTitle: { fontSize: 14, fontWeight: '500', marginBottom: 4 },
   historyCustomer: { fontSize: 12, color: '#666', marginBottom: 4 },
   historyRating: {
     flexDirection: 'row',
     gap: 2,
   },
   historyAmount: { alignItems: 'flex-end' },
-  historyAmountText: { fontSize: 14, fontWeight: '600', color: '#006600', marginBottom: 4 },
+  historyAmountText: { fontSize: 14, fontWeight: '500', color: '#006600', marginBottom: 4 },
   historyDate: { fontSize: 12, color: '#999' },
   withdrawButton: {
     flexDirection: 'row',
@@ -300,5 +300,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     opacity: 0.6,
   },
-  withdrawText: { color: '#6b7280', fontSize: 16, fontWeight: '600' },
+  withdrawText: { color: '#6b7280', fontSize: 16, fontWeight: '500' },
 });

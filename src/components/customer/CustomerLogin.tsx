@@ -225,7 +225,11 @@ style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
                         style={styles.input}
                         placeholder="03XX-XXXXXXX"
                         value={phone}
-                        onChangeText={setPhone}
+                        onChangeText={(text) => {
+                          // Only allow numbers and dash
+                          const cleaned = text.replace(/[^0-9-]/g, '');
+                          setPhone(cleaned);
+                        }}
                         keyboardType="phone-pad"
                       />
                     </View>
@@ -247,7 +251,11 @@ style={styles.otpButton}
                         style={styles.input}
                         placeholder="Enter 6-digit code"
                         value={otp}
-                        onChangeText={setOtp}
+                        onChangeText={(text) => {
+                          // Only allow numbers
+                          const cleaned = text.replace(/[^0-9]/g, '');
+                          setOtp(cleaned);
+                        }}
                         keyboardType="number-pad"
                         maxLength={6}
                       />
@@ -281,7 +289,12 @@ style={styles.loginButton}
                   style={styles.input}
                   placeholder="Enter your name"
                   value={signupName}
-                  onChangeText={setSignupName}
+                  onChangeText={(text) => {
+                    // Only allow letters and spaces
+                    const cleaned = text.replace(/[^a-zA-Z\s]/g, '');
+                    setSignupName(cleaned);
+                  }}
+                  autoCapitalize="words"
                 />
               </View>
             </View>
@@ -309,7 +322,11 @@ style={styles.loginButton}
                   style={styles.input}
                   placeholder="03XX-XXXXXXX"
                   value={signupPhone}
-                  onChangeText={setSignupPhone}
+                  onChangeText={(text) => {
+                    // Only allow numbers and dash
+                    const cleaned = text.replace(/[^0-9-]/g, '');
+                    setSignupPhone(cleaned);
+                  }}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -334,7 +351,11 @@ style={styles.otpButton}
                       style={styles.input}
                       placeholder="Enter 6-digit code"
                       value={signupOtp}
-                      onChangeText={setSignupOtp}
+                      onChangeText={(text) => {
+                        // Only allow numbers
+                        const cleaned = text.replace(/[^0-9]/g, '');
+                        setSignupOtp(cleaned);
+                      }}
                       keyboardType="number-pad"
                       maxLength={6}
                     />
@@ -365,7 +386,11 @@ style={styles.otpButton}
                   style={styles.input}
                   placeholder="XXXXX-XXXXXXX-X"
                   value={signupCnic}
-                  onChangeText={setSignupCnic}
+                  onChangeText={(text) => {
+                    // Only allow numbers and dash
+                    const cleaned = text.replace(/[^0-9-]/g, '');
+                    setSignupCnic(cleaned);
+                  }}
                   keyboardType="numeric"
                 />
               </View>
@@ -468,7 +493,7 @@ const styles = StyleSheet.create({
   },
   activeTabText: {
     color: '#006600',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   form: {
     gap: 16,
@@ -519,7 +544,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   divider: {
     flexDirection: 'row',
@@ -574,7 +599,7 @@ const styles = StyleSheet.create({
   },
   googleGText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#4285F4',
   },
   required: {
@@ -604,7 +629,7 @@ const styles = StyleSheet.create({
   otpButtonText: {
     color: '#006600',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   otpHint: {
     color: '#666',

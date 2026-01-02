@@ -87,6 +87,7 @@ export function PostTask({ context }: { context: AppContextType }) {
       status: 'pending' as const,
       customerId: context.currentUser?.id || 'customer-1',
       customerName: context.currentUser?.name || 'Ahmed',
+      customerProfilePicture: context.currentUser?.profilePicture,
       bids: [
         {
           id: 'bid-1',
@@ -183,7 +184,12 @@ export function PostTask({ context }: { context: AppContextType }) {
                 style={styles.input}
                 placeholder="e.g., Fix Kitchen Sink"
                 value={title}
-                onChangeText={setTitle}
+                onChangeText={(text) => {
+                  // Only allow letters, spaces, and basic punctuation
+                  const cleaned = text.replace(/[^a-zA-Z\s'-]/g, '');
+                  setTitle(cleaned);
+                }}
+                autoCapitalize="words"
               />
             </View>
 
@@ -209,10 +215,15 @@ export function PostTask({ context }: { context: AppContextType }) {
                 style={[styles.input, styles.textArea]}
                 placeholder="Describe the task in detail..."
                 value={description}
-                onChangeText={setDescription}
+                onChangeText={(text) => {
+                  // Only allow letters, spaces, and basic punctuation
+                  const cleaned = text.replace(/[^a-zA-Z\s.,!?'-]/g, '');
+                  setDescription(cleaned);
+                }}
                 multiline
                 numberOfLines={4}
                 textAlignVertical="top"
+                autoCapitalize="sentences"
               />
             </View>
 
@@ -283,7 +294,12 @@ style={[
                   style={styles.inputWithIcon}
                   placeholder="Enter your address"
                   value={location}
-                  onChangeText={setLocation}
+                  onChangeText={(text) => {
+                    // Allow letters, numbers, spaces, and address characters
+                    const cleaned = text.replace(/[^a-zA-Z0-9\s.,#-]/g, '');
+                    setLocation(cleaned);
+                  }}
+                  autoCapitalize="words"
                 />
               </View>
             </View>
@@ -325,7 +341,11 @@ style={[styles.button, (!location) && styles.buttonDisabled]}
                   style={styles.inputWithIcon}
                   placeholder="Enter your budget"
                   value={budget}
-                  onChangeText={setBudget}
+                  onChangeText={(text) => {
+                    // Only allow numbers
+                    const cleaned = text.replace(/[^0-9]/g, '');
+                    setBudget(cleaned);
+                  }}
                   keyboardType="numeric"
                 />
               </View>
@@ -436,7 +456,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   stepIndicator: {
     flexDirection: 'row',
@@ -624,7 +644,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   buttonTextSecondary: {
     color: '#333',
