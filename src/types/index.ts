@@ -24,6 +24,7 @@ export type Screen =
   | 'earnings-history'
   | 'worker-profile'
   | 'worker-review'
+  | 'worker-messages'
   // Admin screens
   | 'admin-dashboard'
   | 'user-management'

@@ -27,6 +27,7 @@ import { WorkerLiveTracking } from './src/components/worker/WorkerLiveTracking';
 import { EarningsHistory } from './src/components/worker/EarningsHistory';
 import { WorkerProfile } from './src/components/worker/WorkerProfile';
 import { WorkerReviewScreen } from './src/components/worker/WorkerReviewScreen';
+import { WorkerMessages } from './src/components/worker/WorkerMessages';
 
 // Admin screens
 import { AdminDashboard } from './src/components/admin/AdminDashboard';
@@ -95,6 +96,8 @@ function AppContent() {
         return <WorkerProfile context={context} />;
       case 'worker-review':
         return <WorkerReviewScreen context={context} />;
+      case 'worker-messages':
+        return <WorkerMessages context={context} />;
       
       // Admin screens
       case 'admin-dashboard':

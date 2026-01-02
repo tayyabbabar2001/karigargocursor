@@ -21,7 +21,7 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
@@ -46,9 +46,6 @@ export function WorkerProfile({ context }: { context: AppContextType }) {
             </View>
             <Text style={styles.userSkill}>{user.skill}</Text>
           </View>
-          <TouchableOpacity style={styles.editButton}>
-            <Ionicons name="create-outline" size={20} color="#fff" />
-          </TouchableOpacity>
         </View>
       </View>
 

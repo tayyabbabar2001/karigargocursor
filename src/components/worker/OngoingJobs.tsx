@@ -3,7 +3,18 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { AppContextType } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
 
-const activeJobs = [
+interface Job {
+  id: string;
+  title: string;
+  customer: string;
+  location: string;
+  amount: number;
+  status: 'In Progress' | 'Accepted' | 'Completed';
+  date: string;
+  rating?: number;
+}
+
+const initialActiveJobs: Job[] = [
   {
     id: '1',
     title: 'Fix Kitchen Sink',
@@ -24,13 +35,14 @@ const activeJobs = [
   },
 ];
 
-const completedJobs = [
+const initialCompletedJobs: Job[] = [
   {
     id: '3',
     title: 'Paint Living Room',
     customer: 'Usman Ahmed',
     location: 'Islamabad',
     amount: 5000,
+    status: 'Completed',
     rating: 5,
     date: '2 days ago',
   },
@@ -40,6 +52,7 @@ const completedJobs = [
     customer: 'Fatima Shah',
     location: 'Karachi',
     amount: 1500,
+    status: 'Completed',
     rating: 4,
     date: '1 week ago',
   },
@@ -47,6 +60,28 @@ const completedJobs = [
 
 export function OngoingJobs({ context }: { context: AppContextType }) {
   const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active');
+  const [activeJobs, setActiveJobs] = useState<Job[]>(initialActiveJobs);
+  const [completedJobs, setCompletedJobs] = useState<Job[]>(initialCompletedJobs);
+
+  const handleJobComplete = (jobId: string) => {
+    const job = activeJobs.find(j => j.id === jobId);
+    if (job) {
+      // Remove from active jobs
+      setActiveJobs(prev => prev.filter(j => j.id !== jobId));
+      // Add to completed jobs with rating
+      setCompletedJobs(prev => [
+        {
+          ...job,
+          status: 'Completed' as const,
+          rating: 5,
+          date: 'Just now',
+        },
+        ...prev,
+      ]);
+      // Navigate to review screen
+      context.setScreen('worker-review');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -76,7 +111,7 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={styles.content} bounces={false} scrollEventThrottle={16}>
         {activeTab === 'active' ? (
           <View style={styles.jobsList}>
             {activeJobs.map((job) => (
@@ -108,7 +143,7 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.actionButton}
-                    onPress={() => context.setScreen('chat')}
+                    onPress={() => context.setScreen('worker-messages')}
                   >
                     <Ionicons name="chatbubble-outline" size={16} color="#006600" />
                     <Text style={styles.actionText}>Chat</Text>
@@ -116,7 +151,7 @@ export function OngoingJobs({ context }: { context: AppContextType }) {
                   {job.status === 'In Progress' && (
                     <TouchableOpacity
                       style={styles.doneButton}
-                      onPress={() => context.setScreen('worker-review')}
+                      onPress={() => handleJobComplete(job.id)}
                     >
                       <Ionicons name="checkmark-circle" size={16} color="#fff" />
                       <Text style={styles.doneText}>Done</Text>

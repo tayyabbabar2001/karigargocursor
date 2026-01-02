@@ -122,7 +122,7 @@ export function WorkerLiveTracking({ context }: { context: AppContextType }) {
         <View style={styles.actionButtons}>
           <TouchableOpacity
             style={styles.chatButton}
-            onPress={() => context.setScreen('chat')}
+            onPress={() => context.setScreen('worker-messages')}
           >
             <Ionicons name="chatbubble-outline" size={20} color="#006600" />
             <Text style={styles.chatButtonText}>Chat</Text>

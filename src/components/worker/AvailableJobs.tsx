@@ -129,7 +129,7 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
       </View>
 
       {/* Jobs List */}
-      <ScrollView style={styles.jobsList} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.jobsList} showsVerticalScrollIndicator={false} bounces={false} scrollEventThrottle={16}>
         <View style={styles.jobsHeader}>
           <Text style={styles.jobsTitle}>Nearby Jobs</Text>
           <Text style={styles.jobsCount}>{filteredJobs.length} jobs</Text>

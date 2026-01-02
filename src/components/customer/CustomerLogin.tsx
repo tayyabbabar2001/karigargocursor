@@ -113,7 +113,7 @@ export function CustomerLogin({ context }: { context: AppContextType }) {
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} bounces={false} scrollEventThrottle={16}>
       {/* Header */}
       <View style={styles.header}>
         <Logo size="medium" style={styles.logo} />

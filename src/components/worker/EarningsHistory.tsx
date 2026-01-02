@@ -34,7 +34,7 @@ export function EarningsHistory({ context }: { context: AppContextType }) {
   const weeklyTotal = weeklyData.reduce((sum, d) => sum + d.amount, 0);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => context.setScreen('available-jobs')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />

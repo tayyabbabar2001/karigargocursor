@@ -17,7 +17,7 @@ export function JobDetail({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => context.setScreen('available-jobs')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />

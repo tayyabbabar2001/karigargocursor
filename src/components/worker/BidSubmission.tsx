@@ -33,7 +33,7 @@ export function BidSubmission({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => context.setScreen('job-detail')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />

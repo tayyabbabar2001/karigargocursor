@@ -33,7 +33,7 @@ export function LiveJobTracking({ context }: { context: AppContextType }) {
   }[workerStatus];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>

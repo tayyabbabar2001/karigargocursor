@@ -22,7 +22,7 @@ export function JobTracking({ context }: { context: AppContextType }) {
   ];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>

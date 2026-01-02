@@ -12,23 +12,23 @@ interface ExtendedMessage extends Message {
   voiceDuration?: number;
 }
 
-export function ChatScreen({ context }: { context: AppContextType }) {
+export function WorkerMessages({ context }: { context: AppContextType }) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<ExtendedMessage[]>([
     {
       id: '1',
-      senderId: 'worker-1',
-      text: 'Hello! I can help you with this task. When would you like me to start?',
+      senderId: 'customer-1',
+      text: 'Hello! I need help with fixing my kitchen sink.',
       timestamp: '10:30 AM',
-      isCustomer: false,
+      isCustomer: true,
       type: 'text',
     },
     {
       id: '2',
-      senderId: 'customer-1',
-      text: 'Hi! Can you come tomorrow morning?',
+      senderId: 'worker-1',
+      text: 'Hi! I can help you with that. When would you like me to come?',
       timestamp: '10:32 AM',
-      isCustomer: true,
+      isCustomer: false,
       type: 'text',
     },
   ]);
@@ -38,17 +38,17 @@ export function ChatScreen({ context }: { context: AppContextType }) {
   const [recordingDuration, setRecordingDuration] = useState(0);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const workerName = context.selectedWorker?.name || context.selectedBid?.workerName || 'Worker';
-  const workerPhoto = context.selectedWorker?.photo || context.selectedBid?.workerPhoto || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Worker';
+  const customerName = context.currentTask?.customerName || 'Customer';
+  const customerPhoto = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Customer';
 
   const handleSend = () => {
     if (message.trim()) {
       const newMessage: ExtendedMessage = {
         id: `msg-${Date.now()}`,
-        senderId: context.currentUser?.id || 'customer-1',
+        senderId: context.currentUser?.id || 'worker-1',
         text: message,
         timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-        isCustomer: true,
+        isCustomer: false,
         type: 'text',
       };
       setMessages([...messages, newMessage]);
@@ -73,10 +73,10 @@ export function ChatScreen({ context }: { context: AppContextType }) {
     if (!result.canceled && result.assets[0]) {
       const newMessage: ExtendedMessage = {
         id: `msg-${Date.now()}`,
-        senderId: context.currentUser?.id || 'customer-1',
+        senderId: context.currentUser?.id || 'worker-1',
         text: '',
         timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-        isCustomer: true,
+        isCustomer: false,
         type: 'image',
         mediaUri: result.assets[0].uri,
       };
@@ -101,10 +101,10 @@ export function ChatScreen({ context }: { context: AppContextType }) {
     if (!result.canceled && result.assets[0]) {
       const newMessage: ExtendedMessage = {
         id: `msg-${Date.now()}`,
-        senderId: context.currentUser?.id || 'customer-1',
+        senderId: context.currentUser?.id || 'worker-1',
         text: '',
         timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-        isCustomer: true,
+        isCustomer: false,
         type: 'video',
         mediaUri: result.assets[0].uri,
       };
@@ -156,10 +156,10 @@ export function ChatScreen({ context }: { context: AppContextType }) {
       if (uri) {
         const newMessage: ExtendedMessage = {
           id: `msg-${Date.now()}`,
-          senderId: context.currentUser?.id || 'customer-1',
+          senderId: context.currentUser?.id || 'worker-1',
           text: '',
           timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-          isCustomer: true,
+          isCustomer: false,
           type: 'voice',
           mediaUri: uri,
           voiceDuration: recordingDuration,
@@ -189,15 +189,15 @@ export function ChatScreen({ context }: { context: AppContextType }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => context.setScreen('customer-dashboard')}>
+          <TouchableOpacity onPress={() => context.setScreen('available-jobs')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Image
-            source={{ uri: workerPhoto }}
+            source={{ uri: customerPhoto }}
             style={styles.headerAvatar}
           />
           <View style={styles.headerInfo}>
-            <Text style={styles.headerName}>{workerName}</Text>
+            <Text style={styles.headerName}>{customerName}</Text>
             <View style={styles.onlineIndicator}>
               <View style={styles.onlineDot} />
               <Text style={styles.onlineText}>Online</Text>
@@ -260,16 +260,6 @@ export function ChatScreen({ context }: { context: AppContextType }) {
         ))}
       </ScrollView>
 
-      {/* Mark as Complete Option */}
-      <View style={styles.completeSection}>
-        <TouchableOpacity
-          style={styles.completeButton}
-          onPress={() => context.setScreen('payment')}
-        >
-          <Text style={styles.completeButtonText}>Mark Job as Complete</Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Input Area */}
       <View style={styles.inputContainer}>
         {isRecording ? (
@@ -297,11 +287,10 @@ export function ChatScreen({ context }: { context: AppContextType }) {
               maxLength={500}
             />
             <TouchableOpacity
-              style={styles.voiceButton}
+              style={styles.recordButton}
               onPress={startRecording}
-              onLongPress={startRecording}
             >
-              <Ionicons name="mic" size={24} color="#666" />
+              <Ionicons name="mic" size={24} color="#006600" />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.sendButton, !message.trim() && styles.sendButtonDisabled]}
@@ -318,7 +307,7 @@ export function ChatScreen({ context }: { context: AppContextType }) {
       <Modal
         visible={showAttachmentMenu}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => setShowAttachmentMenu(false)}
       >
         <TouchableOpacity
@@ -328,11 +317,11 @@ export function ChatScreen({ context }: { context: AppContextType }) {
         >
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.modalOption} onPress={handlePickImage}>
-              <Ionicons name="image" size={24} color="#006600" />
+              <Ionicons name="image-outline" size={24} color="#006600" />
               <Text style={styles.modalOptionText}>Photo</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalOption} onPress={handlePickVideo}>
-              <Ionicons name="videocam" size={24} color="#006600" />
+              <Ionicons name="videocam-outline" size={24} color="#006600" />
               <Text style={styles.modalOptionText}>Video</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -342,7 +331,7 @@ export function ChatScreen({ context }: { context: AppContextType }) {
                 startRecording();
               }}
             >
-              <Ionicons name="mic" size={24} color="#006600" />
+              <Ionicons name="mic-outline" size={24} color="#006600" />
               <Text style={styles.modalOptionText}>Voice</Text>
             </TouchableOpacity>
           </View>
@@ -353,10 +342,7 @@ export function ChatScreen({ context }: { context: AppContextType }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
+  container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: {
     backgroundColor: '#006600',
     padding: 16,
@@ -374,58 +360,43 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#fff',
   },
-  headerInfo: {
-    flex: 1,
-  },
-  headerName: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
+  headerInfo: { flex: 1 },
+  headerName: { color: '#fff', fontSize: 16, fontWeight: '600' },
   onlineIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
+    gap: 4,
+    marginTop: 2,
   },
   onlineDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#4ade80',
+    backgroundColor: '#10b981',
   },
-  onlineText: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 12,
-  },
-  messagesContainer: {
-    flex: 1,
-  },
-  messagesContent: {
-    padding: 16,
-    gap: 12,
-  },
+  onlineText: { color: 'rgba(255, 255, 255, 0.8)', fontSize: 12 },
+  messagesContainer: { flex: 1 },
+  messagesContent: { padding: 16, gap: 12 },
   messageWrapper: {
     maxWidth: '75%',
-    marginBottom: 4,
   },
   customerWrapper: {
-    alignSelf: 'flex-end',
-  },
-  workerWrapper: {
     alignSelf: 'flex-start',
   },
+  workerWrapper: {
+    alignSelf: 'flex-end',
+  },
   messageBubble: {
-    padding: 12,
     borderRadius: 16,
+    padding: 12,
   },
   customerMessage: {
-    backgroundColor: '#006600',
-    borderBottomRightRadius: 4,
+    backgroundColor: '#e5e7eb',
+    borderBottomLeftRadius: 4,
   },
   workerMessage: {
-    backgroundColor: '#fff',
-    borderBottomLeftRadius: 4,
+    backgroundColor: '#006600',
+    borderBottomRightRadius: 4,
   },
   messageText: {
     fontSize: 16,
@@ -433,6 +404,14 @@ const styles = StyleSheet.create({
   },
   customerMessageText: {
     color: '#fff',
+  },
+  timestamp: {
+    fontSize: 11,
+    color: '#666',
+    marginTop: 4,
+  },
+  customerTimestamp: {
+    color: 'rgba(255, 255, 255, 0.7)',
   },
   messageImage: {
     width: 200,
@@ -458,50 +437,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingVertical: 8,
   },
   voiceDuration: {
     fontSize: 14,
     color: '#666',
-    minWidth: 40,
   },
   customerVoiceText: {
     color: '#fff',
   },
-  timestamp: {
-    fontSize: 10,
-    color: '#999',
-    marginTop: 4,
-    alignSelf: 'flex-end',
-  },
-  customerTimestamp: {
-    color: 'rgba(255, 255, 255, 0.7)',
-  },
-  completeSection: {
-    padding: 12,
-    backgroundColor: '#fef3c7',
-    borderTopWidth: 1,
-    borderTopColor: '#fde68a',
-  },
-  completeButton: {
-    borderWidth: 1,
-    borderColor: '#006600',
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-  },
-  completeButtonText: {
-    color: '#006600',
-    fontSize: 14,
-    fontWeight: '600',
-  },
   inputContainer: {
     flexDirection: 'row',
+    alignItems: 'flex-end',
     padding: 12,
     backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    alignItems: 'flex-end',
+    borderTopColor: '#e5e7eb',
     gap: 8,
   },
   attachButton: {
@@ -510,21 +460,21 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#e5e7eb',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
     maxHeight: 100,
     fontSize: 16,
   },
-  voiceButton: {
+  recordButton: {
     padding: 8,
   },
   sendButton: {
     backgroundColor: '#006600',
-    borderRadius: 20,
     width: 40,
     height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -532,31 +482,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
   recordingContainer: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 12,
-    padding: 8,
-    backgroundColor: '#fee',
-    borderRadius: 20,
+    flex: 1,
+    paddingVertical: 8,
   },
   recordingIndicator: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#f00',
+    backgroundColor: '#ef4444',
   },
   recordingText: {
-    flex: 1,
     fontSize: 16,
     fontWeight: '600',
-    color: '#c00',
+    color: '#ef4444',
   },
   stopButton: {
-    backgroundColor: '#c00',
-    borderRadius: 20,
+    backgroundColor: '#ef4444',
     width: 40,
     height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -570,6 +518,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
+    paddingBottom: 40,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
@@ -583,3 +532,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from 'react-native';
 import { AppContextType } from '../../types';
 import { Logo } from '../Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
 
 export function WorkerLogin({ context }: { context: AppContextType }) {
   const [email, setEmail] = useState('');
@@ -17,6 +18,12 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPhone, setSignupPhone] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
+  const [signupCity, setSignupCity] = useState('');
+  const [signupCnic, setSignupCnic] = useState('');
+  const [signupCnicFront, setSignupCnicFront] = useState<string | null>(null);
+  const [signupCnicBack, setSignupCnicBack] = useState<string | null>(null);
+  const [showSignupOtp, setShowSignupOtp] = useState(false);
+  const [signupOtp, setSignupOtp] = useState('');
 
   const handleLogin = () => {
     context.setCurrentUser({ name: 'Ali Khan', id: 'worker-1', role: 'worker' });
@@ -32,8 +39,67 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
     handleLogin();
   };
 
+  const handleSendSignupOtp = () => {
+    if (!signupPhone) {
+      Alert.alert('Error', 'Please enter your phone number to send OTP.');
+      return;
+    }
+    Alert.alert('OTP Sent', `OTP sent to ${signupPhone}`);
+    setShowSignupOtp(true);
+  };
+
+  const handleVerifySignupOtp = () => {
+    if (signupOtp.length !== 6) {
+      Alert.alert('Error', 'Please enter a 6-digit OTP.');
+      return;
+    }
+    handleSignup();
+  };
+
+  const handleSignup = () => {
+    if (!signupName || !signupEmail || !signupPhone || !signupPassword || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity) {
+      Alert.alert('Error', 'Please fill all required fields including CNIC details.');
+      return;
+    }
+    context.setCurrentUser({
+      name: signupName,
+      email: signupEmail,
+      phone: signupPhone,
+      cnic: signupCnic,
+      skill: skill,
+      city: signupCity,
+      id: 'worker-' + Date.now(),
+      role: 'worker',
+    });
+    context.setUserRole('worker');
+    context.setScreen('available-jobs');
+  };
+
+  const handlePickCnic = async (side: 'front' | 'back') => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please grant camera roll permissions');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      if (side === 'front') {
+        setSignupCnicFront(result.assets[0].uri);
+      } else {
+        setSignupCnicBack(result.assets[0].uri);
+      }
+    }
+  };
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} bounces={false} scrollEventThrottle={16}>
       {/* Header */}
       <View style={styles.header}>
         <Logo size="medium" style={styles.logo} />
@@ -162,40 +228,102 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
         ) : (
           <View style={styles.form}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Full Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your name"
-                value={signupName}
-                onChangeText={setSignupName}
-              />
+              <Text style={styles.label}>Full Name <Text style={styles.required}>*</Text></Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="person-outline" size={16} color="#999" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your name"
+                  value={signupName}
+                  onChangeText={setSignupName}
+                />
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                value={signupEmail}
-                onChangeText={setSignupEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+              <Text style={styles.label}>Email <Text style={styles.required}>*</Text></Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="mail-outline" size={16} color="#999" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your email"
+                  value={signupEmail}
+                  onChangeText={setSignupEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Phone Number</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="03XX-XXXXXXX"
-                value={signupPhone}
-                onChangeText={setSignupPhone}
-                keyboardType="phone-pad"
-              />
+              <Text style={styles.label}>Phone Number <Text style={styles.required}>*</Text></Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="call-outline" size={16} color="#999" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="03XX-XXXXXXX"
+                  value={signupPhone}
+                  onChangeText={setSignupPhone}
+                  keyboardType="phone-pad"
+                />
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Primary Skill</Text>
+              <Text style={styles.label}>City <Text style={styles.required}>*</Text></Text>
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  selectedValue={signupCity}
+                  onValueChange={setSignupCity}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Select your city" value="" />
+                  <Picker.Item label="Karachi" value="Karachi" />
+                  <Picker.Item label="Lahore" value="Lahore" />
+                  <Picker.Item label="Islamabad" value="Islamabad" />
+                  <Picker.Item label="Rawalpindi" value="Rawalpindi" />
+                  <Picker.Item label="Faisalabad" value="Faisalabad" />
+                  <Picker.Item label="Multan" value="Multan" />
+                  <Picker.Item label="Peshawar" value="Peshawar" />
+                  <Picker.Item label="Quetta" value="Quetta" />
+                </Picker>
+              </View>
+            </View>
+
+            {!showSignupOtp ? (
+              <TouchableOpacity
+                style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
+                onPress={handleSendSignupOtp}
+                disabled={!signupPhone}
+              >
+                <Text style={styles.otpButtonText}>Send OTP Verification</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Verification Code <Text style={styles.required}>*</Text></Text>
+                  <View style={styles.inputWrapper}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter 6-digit code"
+                      value={signupOtp}
+                      onChangeText={setSignupOtp}
+                      keyboardType="number-pad"
+                      maxLength={6}
+                    />
+                  </View>
+                  <Text style={styles.otpHint}>Code sent to {signupPhone}</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setShowSignupOtp(false)}
+                >
+                  <Text style={styles.changeNumber}>Change mobile number</Text>
+                </TouchableOpacity>
+              </>
+            )}
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Primary Skill <Text style={styles.required}>*</Text></Text>
               <View style={styles.pickerWrapper}>
                 <Picker
                   selectedValue={skill}
@@ -214,36 +342,66 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>CNIC Upload</Text>
-              <TouchableOpacity style={styles.uploadArea}>
-                <Ionicons name="document-text-outline" size={32} color="#999" />
-                <Text style={styles.uploadText}>Upload CNIC (Front & Back)</Text>
-                <Text style={styles.uploadSubtext}>Required for verification</Text>
-              </TouchableOpacity>
+              <Text style={styles.label}>CNIC Number <Text style={styles.required}>*</Text></Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="card-outline" size={16} color="#999" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="XXXXX-XXXXXXX-X"
+                  value={signupCnic}
+                  onChangeText={setSignupCnic}
+                  keyboardType="number-pad"
+                  maxLength={15}
+                />
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Certificates (Optional)</Text>
-              <TouchableOpacity style={styles.uploadArea}>
-                <Ionicons name="cloud-upload-outline" size={32} color="#999" />
-                <Text style={styles.uploadText}>Upload skill certificates</Text>
-                <Text style={styles.uploadSubtext}>Helps build trust</Text>
-              </TouchableOpacity>
+              <Text style={styles.label}>CNIC Upload <Text style={styles.required}>*</Text></Text>
+              <View style={styles.cnicUploadContainer}>
+                <TouchableOpacity style={styles.cnicUploadButton} onPress={() => handlePickCnic('front')}>
+                  {signupCnicFront ? (
+                    <Image source={{ uri: signupCnicFront }} style={styles.cnicImagePreview} />
+                  ) : (
+                    <>
+                      <Ionicons name="camera-outline" size={24} color="#006600" />
+                      <Text style={styles.cnicUploadText}>Front Side</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.cnicUploadButton} onPress={() => handlePickCnic('back')}>
+                  {signupCnicBack ? (
+                    <Image source={{ uri: signupCnicBack }} style={styles.cnicImagePreview} />
+                  ) : (
+                    <>
+                      <Ionicons name="camera-outline" size={24} color="#006600" />
+                      <Text style={styles.cnicUploadText}>Back Side</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Create a password"
-                value={signupPassword}
-                onChangeText={setSignupPassword}
-                secureTextEntry
-              />
+              <Text style={styles.label}>Password <Text style={styles.required}>*</Text></Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="lock-closed-outline" size={16} color="#999" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Create a password"
+                  value={signupPassword}
+                  onChangeText={setSignupPassword}
+                  secureTextEntry
+                />
+              </View>
             </View>
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Create Worker Account</Text>
+            <TouchableOpacity
+              style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity) && styles.loginButtonDisabled]}
+              onPress={handleVerifySignupOtp}
+              disabled={!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !skill || !signupCity}
+            >
+              <Text style={styles.loginButtonText}>Verify & Create Account</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -434,5 +592,42 @@ const styles = StyleSheet.create({
   switchText: {
     color: '#006600',
     fontSize: 14,
+  },
+  required: {
+    color: '#ef4444',
+  },
+  otpButtonDisabled: {
+    opacity: 0.5,
+  },
+  loginButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  cnicUploadContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  cnicUploadButton: {
+    flex: 1,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: '#ddd',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+    backgroundColor: '#fafafa',
+  },
+  cnicUploadText: {
+    color: '#006600',
+    fontSize: 12,
+    marginTop: 8,
+    fontWeight: '500',
+  },
+  cnicImagePreview: {
+    width: '100%',
+    height: 80,
+    borderRadius: 8,
+    resizeMode: 'cover',
   },
 });

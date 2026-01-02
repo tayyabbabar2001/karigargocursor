@@ -120,7 +120,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} bounces={false} scrollEventThrottle={16}>
         {/* Service Categories */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Service Categories</Text>
@@ -130,6 +130,7 @@ export function CustomerDashboard({ context }: { context: AppContextType }) {
             showsHorizontalScrollIndicator={false}
             style={styles.categoriesScroll}
             scrollEnabled={false}
+            bounces={false}
           >
             {/* Duplicate categories for infinite loop */}
             {[...categories, ...categories, ...categories].map((category, index) => (

@@ -164,7 +164,7 @@ export function PostTask({ context }: { context: AppContextType }) {
       </View>
 
       {/* Form */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.formContainer}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.formContainer} bounces={false} scrollEventThrottle={16}>
         {step === 1 && (
           <View style={styles.stepContent}>
             <View style={styles.inputGroup}>

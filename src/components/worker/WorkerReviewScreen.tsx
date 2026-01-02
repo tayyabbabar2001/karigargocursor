@@ -45,7 +45,7 @@ export function WorkerReviewScreen({ context }: { context: AppContextType }) {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} bounces={false} scrollEventThrottle={16}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Rate the Customer</Text>
       </View>
