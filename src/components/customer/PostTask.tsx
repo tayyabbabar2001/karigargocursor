@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform, Image, Alert, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { AppContextType } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
+import { createJob } from '../../services/firestoreService';
+import { uploadJobImage } from '../../services/storageService';
 
 const categories = ['Electrician', 'Plumber', 'Carpenter', 'Painter', 'AC Technician', 'Cleaner', 'Other'];
 
@@ -21,6 +23,7 @@ export function PostTask({ context }: { context: AppContextType }) {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [attachedImage, setAttachedImage] = useState<string | null>(null);
   const [attachedVideo, setAttachedVideo] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handlePickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -73,64 +76,69 @@ export function PostTask({ context }: { context: AppContextType }) {
     return `${hours}:${minutes}`;
   };
 
-  const handleSubmit = () => {
-    const newTask = {
-      id: `task-${Date.now()}`,
-      title,
-      description,
-      category,
-      location,
-      budget: parseFloat(budget),
-      date: formatDate(selectedDate),
-      time: formatTime(selectedTime),
-      image: attachedImage || attachedVideo || undefined,
-      status: 'pending' as const,
-      customerId: context.currentUser?.id || 'customer-1',
-      customerName: context.currentUser?.name || 'Ahmed',
-      customerProfilePicture: context.currentUser?.profilePicture,
-      bids: [
-        {
-          id: 'bid-1',
-          workerId: 'worker-1',
-          workerName: 'Ali Khan',
-          workerPhoto: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ali',
-          skill: category,
-          bidPrice: parseFloat(budget) * 0.8,
-          rating: 4.8,
-          distance: '2.5 km',
-          verified: true,
-          completionTime: '2 hours',
-        },
-        {
-          id: 'bid-2',
-          workerId: 'worker-2',
-          workerName: 'Bilal Ahmed',
-          workerPhoto: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bilal',
-          skill: category,
-          bidPrice: parseFloat(budget) * 0.9,
-          rating: 4.5,
-          distance: '3.8 km',
-          verified: true,
-          completionTime: '3 hours',
-        },
-        {
-          id: 'bid-3',
-          workerId: 'worker-3',
-          workerName: 'Kamran Hussain',
-          workerPhoto: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Kamran',
-          skill: category,
-          bidPrice: parseFloat(budget),
-          rating: 4.9,
-          distance: '1.2 km',
-          verified: true,
-          completionTime: '1.5 hours',
-        },
-      ],
-    };
+  const handleSubmit = async () => {
+    if (!title || !category || !description || !location || !budget) {
+      Alert.alert('Error', 'Please fill all required fields');
+      return;
+    }
 
-    context.setCurrentTask(newTask);
-    context.setTasks([...context.tasks, newTask]);
-    context.setScreen('bidding');
+    setLoading(true);
+    try {
+      // Upload image if attached (if Storage is enabled)
+      let imageUrl = attachedImage || attachedVideo || undefined;
+      if (attachedImage && imageUrl) {
+        try {
+          const jobId = `job-${Date.now()}`;
+          imageUrl = await uploadJobImage(attachedImage, jobId);
+        } catch (storageError) {
+          console.log('Image upload failed (Storage may not be enabled), using local URI');
+          // Continue with local URI
+        }
+      }
+
+      // Create job in Firestore
+      const jobId = await createJob({
+        title,
+        description,
+        category,
+        location,
+        budget: parseFloat(budget),
+        date: formatDate(selectedDate),
+        time: formatTime(selectedTime),
+        image: imageUrl,
+        status: 'pending',
+        customerId: context.currentUser?.id || 'customer-1',
+        customerName: context.currentUser?.name || 'Ahmed',
+        customerProfilePicture: context.currentUser?.profilePicture,
+        bids: [], // Bids will be added by workers later
+      });
+
+      // Get the created job to set as current task
+      const newTask = {
+        id: jobId,
+        title,
+        description,
+        category,
+        location,
+        budget: parseFloat(budget),
+        date: formatDate(selectedDate),
+        time: formatTime(selectedTime),
+        image: imageUrl,
+        status: 'pending' as const,
+        customerId: context.currentUser?.id || 'customer-1',
+        customerName: context.currentUser?.name || 'Ahmed',
+        customerProfilePicture: context.currentUser?.profilePicture,
+        bids: [],
+      };
+
+      context.setCurrentTask(newTask);
+      context.setTasks([...context.tasks, newTask]);
+      context.setScreen('bidding');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to create job');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -413,14 +421,18 @@ style={[styles.button, styles.buttonSecondary]}
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={1}
-style={[
+                style={[
                   styles.button,
-                  (!budget) && styles.buttonDisabled,
+                  ((!budget) || loading) && styles.buttonDisabled,
                 ]}
                 onPress={handleSubmit}
-                disabled={!budget}
+                disabled={!budget || loading}
               >
-                <Text style={styles.buttonText}>Post Task</Text>
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Post Task</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>

@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { backgroundColor: '#006600', padding: 24, paddingTop: 40, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
   headerTop: { flexDirection: 'row', alignItems: 'center' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500', marginLeft: 12 },
   content: { padding: 16 },
   profileCard: { backgroundColor: '#fff', borderRadius: 12, padding: 24, alignItems: 'center', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
   avatar: { width: 80, height: 80, borderRadius: 40, borderWidth: 4, borderColor: '#006600', marginBottom: 16 },

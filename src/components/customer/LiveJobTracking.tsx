@@ -49,7 +49,7 @@ export function LiveJobTracking({ context }: { context: AppContextType }) {
           <TouchableOpacity activeOpacity={1} onPress={() => context.setScreen('customer-dashboard')}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <View style={styles.headerText}>
+          <View>
             <Text style={styles.headerTitle}>Live Job Tracking</Text>
             <Text style={styles.headerSubtitle}>{task?.title}</Text>
           </View>

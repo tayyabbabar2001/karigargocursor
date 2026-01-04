@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, Modal, Alert } from 'react-native';
 import { AppContextType } from '../../types';
 import { Message } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
+import { subscribeToMessages, sendMessage, MessageData } from '../../services/firestoreService';
 
 interface ExtendedMessage extends Message {
   type?: 'text' | 'image' | 'video' | 'voice';
@@ -14,46 +15,63 @@ interface ExtendedMessage extends Message {
 
 export function WorkerMessages({ context }: { context: AppContextType }) {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<ExtendedMessage[]>([
-    {
-      id: '1',
-      senderId: 'customer-1',
-      text: 'Hello! I need help with fixing my kitchen sink.',
-      timestamp: '10:30 AM',
-      isCustomer: true,
-      type: 'text',
-    },
-    {
-      id: '2',
-      senderId: 'worker-1',
-      text: 'Hi! I can help you with that. When would you like me to come?',
-      timestamp: '10:32 AM',
-      isCustomer: false,
-      type: 'text',
-    },
-  ]);
+  const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const messagesEndRef = useRef<ScrollView>(null);
+
+  const jobId = context.currentTask?.id;
+  const currentUserId = context.currentUser?.id;
 
   const customerName = context.currentTask?.customerName || 'Customer';
   const customerPhoto = context.currentTask?.customerProfilePicture ||
                        'https://api.dicebear.com/7.x/avataaars/svg?seed=' + customerName;
 
-  const handleSend = () => {
-    if (message.trim()) {
-      const newMessage: ExtendedMessage = {
-        id: `msg-${Date.now()}`,
-        senderId: context.currentUser?.id || 'worker-1',
+  // Subscribe to real-time messages
+  useEffect(() => {
+    if (!jobId) return;
+
+    const unsubscribe = subscribeToMessages(jobId, (firestoreMessages: MessageData[]) => {
+      const convertedMessages: ExtendedMessage[] = firestoreMessages.map((msg) => ({
+        id: msg.id,
+        senderId: msg.senderId,
+        text: msg.text,
+        timestamp: msg.createdAt 
+          ? new Date(msg.createdAt.seconds * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+          : msg.timestamp,
+        isCustomer: msg.isCustomer,
+        type: 'text' as const,
+      }));
+
+      setMessages(convertedMessages);
+      
+      setTimeout(() => {
+        messagesEndRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    });
+
+    return () => unsubscribe();
+  }, [jobId]);
+
+  const handleSend = async () => {
+    if (!message.trim() || !jobId || !currentUserId) return;
+
+    try {
+      await sendMessage({
+        jobId: jobId,
+        senderId: currentUserId,
         text: message,
         timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
         isCustomer: false,
-        type: 'text',
-      };
-      setMessages([...messages, newMessage]);
+      });
+
       setMessage('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      Alert.alert('Error', 'Failed to send message');
     }
   };
 

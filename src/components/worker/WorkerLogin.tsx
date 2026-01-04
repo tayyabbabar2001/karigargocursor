@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import { AppContextType } from '../../types';
 import { Logo } from '../Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
+import { signInWithEmail, signUpWithEmail, sendOTP, verifyOTP, UserData } from '../../services/authService';
+import { uploadProfilePicture, uploadCNICFront, uploadCNICBack } from '../../services/storageService';
+import { auth, db } from '../../config/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
 export function WorkerLogin({ context }: { context: AppContextType }) {
   const [email, setEmail] = useState('');
@@ -26,11 +30,41 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
   const [signupProfilePicture, setSignupProfilePicture] = useState<string | null>(null);
   const [showSignupOtp, setShowSignupOtp] = useState(false);
   const [signupOtp, setSignupOtp] = useState('');
+  const [signupOtpVerified, setSignupOtpVerified] = useState(false); // Track if OTP is verified
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    context.setCurrentUser({ name: 'Ali Khan', id: 'worker-1', role: 'worker' });
-    context.setUserRole('worker');
-    context.setScreen('available-jobs');
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter email and password');
+      return;
+    }
+
+    setLoading(true);
+    // Simple login without Firebase authentication
+    // Allow login with any credentials (like before Firebase integration)
+    try {
+      const userData: any = {
+        id: `worker-${Date.now()}`,
+        name: email.split('@')[0] || 'Worker',
+        email: email,
+        phone: email,
+        role: 'worker',
+      };
+      
+      // Set user and role first
+      context.setCurrentUser(userData);
+      context.setUserRole('worker');
+      
+      // Small delay to ensure state updates
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Navigate to dashboard
+      context.setScreen('available-jobs');
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      Alert.alert('Login Failed', error.message || 'Invalid email or password');
+    }
   };
 
   const handleSendOtp = () => {
@@ -41,47 +75,214 @@ export function WorkerLogin({ context }: { context: AppContextType }) {
     handleLogin();
   };
 
-  const handleSendSignupOtp = () => {
+  const handleSendSignupOtp = async () => {
     if (!signupPhone) {
       Alert.alert('Error', 'Please enter your phone number to send OTP.');
       return;
     }
-    Alert.alert('OTP Sent', `OTP sent to ${signupPhone}`);
-    setShowSignupOtp(true);
+
+    setLoading(true);
+    try {
+      // Format phone number (ensure it has country code)
+      let formattedPhone = signupPhone.trim();
+      
+      // If doesn't start with +, add Pakistan country code (+92)
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone = formattedPhone.replace(/^0/, '');
+        formattedPhone = `+92${formattedPhone}`;
+      }
+      
+      await sendOTP(formattedPhone);
+      setShowSignupOtp(true);
+      setSignupOtpVerified(false); // Reset verification status when new OTP is sent
+      setSignupOtp(''); // Clear previous OTP
+      Alert.alert('OTP Sent', `Verification code sent to ${formattedPhone}. Phone verification is REQUIRED to create your account.`);
+    } catch (error: any) {
+      Alert.alert(
+        'Phone Authentication Error',
+        error.message || 'Failed to send OTP. Please check your phone number and try again. Phone verification is required for signup.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleVerifySignupOtp = () => {
-    if (signupOtp.length !== 6) {
-      Alert.alert('Error', 'Please enter a 6-digit OTP.');
+  const handleVerifySignupOtp = async () => {
+    if (!showSignupOtp) {
+      Alert.alert('Error', 'Please send OTP first');
       return;
     }
-    handleSignup();
-  };
-
-  const handleSignup = () => {
+    
+    if (signupOtp.length !== 6) {
+      Alert.alert('Error', 'Please enter 6-digit verification code');
+      return;
+    }
+    
     if (!signupName || !signupEmail || !signupPhone || !signupPassword || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture) {
       Alert.alert('Error', 'Please fill all required fields including Profile Picture, CNIC details and at least First Skill.');
       return;
     }
-    // Build skills array - only include skills that are selected
-    const skills: string[] = [];
-    if (firstSkill) skills.push(firstSkill);
-    if (secondSkill && secondSkill !== firstSkill) skills.push(secondSkill);
     
-    context.setCurrentUser({
-      name: signupName,
-      email: signupEmail,
-      phone: signupPhone,
-      cnic: signupCnic,
-      skills: skills,
-      skill: firstSkill, // Keep for backward compatibility
-      city: signupCity,
-      profilePicture: signupProfilePicture || undefined,
-      id: 'worker-' + Date.now(),
-      role: 'worker',
-    });
-    context.setUserRole('worker');
-    context.setScreen('available-jobs');
+    setLoading(true);
+    try {
+      // Format phone number
+      const formattedPhone = signupPhone.startsWith('+') ? signupPhone : `+92${signupPhone.replace(/^0/, '')}`;
+      
+      // Build skills array
+      const skills: string[] = [];
+      if (firstSkill) skills.push(firstSkill);
+      if (secondSkill && secondSkill !== firstSkill) skills.push(secondSkill);
+      
+      // Verify OTP - this is MANDATORY for signup
+      let userData = await verifyOTP(signupOtp, {
+        name: signupName,
+        email: signupEmail,
+        role: 'worker',
+        phone: formattedPhone,
+        cnic: signupCnic,
+        skills: skills,
+        city: signupCity,
+      });
+      
+      // Mark OTP as verified
+      setSignupOtpVerified(true);
+      
+      // Upload images if Storage is enabled
+      let profilePictureUrl = signupProfilePicture;
+      let cnicFrontUrl = signupCnicFront;
+      let cnicBackUrl = signupCnicBack;
+      
+      try {
+        // Upload profile picture
+        try {
+          profilePictureUrl = await uploadProfilePicture(signupProfilePicture, userData.id || `worker-${Date.now()}`);
+        } catch (e) {
+          console.log('Profile picture upload failed (Storage may not be enabled):', e);
+        }
+
+        // Upload CNIC images
+        try {
+          cnicFrontUrl = await uploadCNICFront(signupCnicFront, userData.id || `worker-${Date.now()}`);
+        } catch (e) {
+          console.log('CNIC front upload failed:', e);
+        }
+
+        try {
+          cnicBackUrl = await uploadCNICBack(signupCnicBack, userData.id || `worker-${Date.now()}`);
+        } catch (e) {
+          console.log('CNIC back upload failed:', e);
+        }
+      } catch (storageError) {
+        console.log('Storage not available, using local URIs');
+      }
+      
+      // Update user document with complete profile data if Firebase is available
+      try {
+        const currentUser = auth.currentUser;
+        
+        if (currentUser) {
+          await updateDoc(doc(db, 'users', currentUser.uid), {
+            name: signupName,
+            email: signupEmail,
+            cnic: signupCnic,
+            skills: skills,
+            skill: firstSkill,
+            city: signupCity,
+            profilePicture: profilePictureUrl,
+            cnicFront: cnicFrontUrl,
+            cnicBack: cnicBackUrl,
+          });
+          
+          // Update userData
+          userData = { ...userData, name: signupName, email: signupEmail, cnic: signupCnic, skills, city: signupCity, profilePicture: profilePictureUrl };
+        }
+      } catch (firebaseError) {
+        // If Firebase update fails, just use the userData from verifyOTP
+        console.log('Firebase update failed, using basic userData:', firebaseError);
+        userData = { ...userData, name: signupName, email: signupEmail, cnic: signupCnic, skills, city: signupCity, profilePicture: profilePictureUrl };
+      }
+      
+      // User is now authenticated via phone, set context and navigate
+      context.setCurrentUser(userData);
+      context.setUserRole('worker');
+      context.setScreen('available-jobs');
+    } catch (error: any) {
+      Alert.alert('Verification Failed', error.message || 'Invalid OTP code. Please check and try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignup = async () => {
+    if (!signupName || !signupEmail || !signupPhone || !signupPassword || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture) {
+      Alert.alert('Error', 'Please fill all required fields including Profile Picture, CNIC details and at least First Skill.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Build skills array
+      const skills: string[] = [];
+      if (firstSkill) skills.push(firstSkill);
+      if (secondSkill && secondSkill !== firstSkill) skills.push(secondSkill);
+
+      // Upload images to Firebase Storage (if enabled)
+      let profilePictureUrl = signupProfilePicture;
+      let cnicFrontUrl = signupCnicFront;
+      let cnicBackUrl = signupCnicBack;
+
+      try {
+        // Try to upload to Storage (will fail if Storage not enabled, but we'll catch it)
+        const tempUserId = `worker-${Date.now()}`;
+        
+        // Upload profile picture
+        try {
+          profilePictureUrl = await uploadProfilePicture(signupProfilePicture, tempUserId);
+        } catch (e) {
+          console.log('Profile picture upload failed (Storage may not be enabled):', e);
+        }
+
+        // Upload CNIC images
+        try {
+          cnicFrontUrl = await uploadCNICFront(signupCnicFront, tempUserId);
+        } catch (e) {
+          console.log('CNIC front upload failed:', e);
+        }
+
+        try {
+          cnicBackUrl = await uploadCNICBack(signupCnicBack, tempUserId);
+        } catch (e) {
+          console.log('CNIC back upload failed:', e);
+        }
+      } catch (storageError) {
+        console.log('Storage not available, using local URIs');
+        // Continue with local URIs if Storage is not enabled
+      }
+
+      // Create user account with Firebase Auth
+      const userData = await signUpWithEmail(signupEmail, signupPassword, {
+        name: signupName,
+        email: signupEmail,
+        phone: signupPhone,
+        role: 'worker',
+        skills: skills,
+        skill: firstSkill,
+        city: signupCity,
+        cnic: signupCnic,
+        cnicFront: cnicFrontUrl || undefined,
+        cnicBack: cnicBackUrl || undefined,
+        profilePicture: profilePictureUrl || undefined,
+        verified: false, // Will be verified by admin later
+      });
+
+      context.setCurrentUser(userData);
+      context.setUserRole('worker');
+      context.setScreen('available-jobs');
+    } catch (error: any) {
+      Alert.alert('Signup Failed', error.message || 'Failed to create account');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePickCnic = async (side: 'front' | 'back') => {
@@ -232,75 +433,18 @@ style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
               <Text style={styles.forgotPassword}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={1}
-          style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
-
-            {/* Divider */}
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            {/* Mobile Number Login */}
-            <View style={styles.mobileSection}>
-              <Text style={styles.mobileSectionText}>Login using your registered mobile number</Text>
-              
-              {!showOtpInput ? (
-                <>
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Mobile Number</Text>
-                    <View style={styles.inputWrapper}>
-                      <Ionicons name="call-outline" size={16} color="#999" style={styles.inputIcon} />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="03XX-XXXXXXX"
-                        value={phone}
-                        onChangeText={setPhone}
-                        keyboardType="phone-pad"
-                      />
-                    </View>
-                  </View>
-                  <TouchableOpacity
-                    activeOpacity={1}
-style={styles.otpButton}
-                    onPress={handleSendOtp}
-                  >
-                    <Text style={styles.otpButtonText}>Send Verification Code</Text>
-                  </TouchableOpacity>
-                </>
+            <TouchableOpacity 
+              activeOpacity={1}
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]} 
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
               ) : (
-                <>
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Verification Code</Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Enter 6-digit code"
-                      value={otp}
-                      onChangeText={setOtp}
-                      keyboardType="number-pad"
-                      maxLength={6}
-                    />
-                    <Text style={styles.otpHint}>Code sent to {phone}</Text>
-                  </View>
-                  <TouchableOpacity
-                    activeOpacity={1}
-style={styles.loginButton}
-                    onPress={handleVerifyOtp}
-                  >
-                    <Text style={styles.loginButtonText}>Verify & Login</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => setShowOtpInput(false)}
-                  >
-                    <Text style={styles.changeNumber}>Change mobile number</Text>
-                  </TouchableOpacity>
-                </>
+                <Text style={styles.loginButtonText}>Login</Text>
               )}
-            </View>
+            </TouchableOpacity>
           </View>
         ) : (
           <View style={styles.form}>
@@ -429,6 +573,11 @@ style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
                     />
                   </View>
                   <Text style={styles.otpHint}>Code sent to {signupPhone}</Text>
+                  {signupOtpVerified && (
+                    <Text style={[styles.otpHint, { color: '#10b981', fontWeight: '500', marginTop: 4 }]}>
+                      ✓ OTP Verified Successfully
+                    </Text>
+                  )}
                 </View>
                 <TouchableOpacity
                   activeOpacity={1}
@@ -553,11 +702,15 @@ style={[styles.otpButton, !signupPhone && styles.otpButtonDisabled]}
 
             <TouchableOpacity
               activeOpacity={1}
-style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture) && styles.loginButtonDisabled]}
+style={[styles.loginButton, (!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupOtpVerified || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture) && styles.loginButtonDisabled]}
               onPress={handleVerifySignupOtp}
-              disabled={!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture}
+              disabled={!signupName || !signupEmail || !signupPhone || !signupPassword || !showSignupOtp || signupOtp.length !== 6 || !signupOtpVerified || !signupCnic || !signupCnicFront || !signupCnicBack || !firstSkill || !signupCity || !signupProfilePicture || loading}
             >
-              <Text style={styles.loginButtonText}>Verify & Create Account</Text>
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.loginButtonText}>Verify & Create Account</Text>
+              )}
             </TouchableOpacity>
           </View>
         )}
@@ -803,6 +956,15 @@ const styles = StyleSheet.create({
   switchText: {
     color: '#006600',
     fontSize: 14,
+  },
+  noLoginMethod: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  noLoginMethodText: {
+    color: '#666',
+    fontSize: 14,
+    textAlign: 'center',
   },
   required: {
     color: '#ef4444',

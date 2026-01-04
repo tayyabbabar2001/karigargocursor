@@ -1,71 +1,53 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { AppContextType, Task } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
-
-const availableJobs: Task[] = [
-  {
-    id: 'job-1',
-    title: 'Fix Kitchen Sink',
-    description: 'Sink is leaking and needs urgent repair',
-    category: 'Plumber',
-    location: 'Karachi, Pakistan',
-    budget: 2500,
-    date: '2025-11-05',
-    time: '10:00 AM',
-    status: 'pending',
-    customerId: 'customer-1',
-    customerName: 'Ahmed Khan',
-  },
-  {
-    id: 'job-2',
-    title: 'Electrical Wiring',
-    description: 'Need rewiring for living room',
-    category: 'Electrician',
-    location: 'Lahore, Pakistan',
-    budget: 4000,
-    date: '2025-11-06',
-    time: '2:00 PM',
-    status: 'pending',
-    customerId: 'customer-2',
-    customerName: 'Sara Ali',
-  },
-  {
-    id: 'job-3',
-    title: 'Paint Living Room',
-    description: 'Need professional painting for 2 rooms',
-    category: 'Painter',
-    location: 'Islamabad, Pakistan',
-    budget: 6000,
-    date: '2025-11-07',
-    time: '9:00 AM',
-    status: 'pending',
-    customerId: 'customer-3',
-    customerName: 'Usman Ahmed',
-  },
-  {
-    id: 'job-4',
-    title: 'Repair Wooden Door',
-    description: 'Door hinge is broken',
-    category: 'Carpenter',
-    location: 'Karachi, Pakistan',
-    budget: 1500,
-    date: '2025-11-05',
-    time: '3:00 PM',
-    status: 'pending',
-    customerId: 'customer-4',
-    customerName: 'Fatima Shah',
-  },
-];
+import { getAvailableJobs } from '../../services/firestoreService';
 
 export function AvailableJobs({ context }: { context: AppContextType }) {
   const [sortBy, setSortBy] = useState('all');
   const [activeTab, setActiveTab] = useState('home');
+  const [availableJobs, setAvailableJobs] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Get worker's skills from currentUser
   const worker = context.currentUser;
   const workerSkills = worker?.skills || (worker?.skill ? [worker.skill] : []);
+
+  // Load jobs from Firestore
+  useEffect(() => {
+    const loadJobs = async () => {
+      try {
+        const jobs = await getAvailableJobs(workerSkills);
+        
+        // Convert Firestore jobs to Task format
+        const tasks: Task[] = jobs.map(job => ({
+          id: job.id,
+          title: job.title,
+          description: job.description,
+          category: job.category,
+          location: job.location,
+          budget: job.budget,
+          date: typeof job.date === 'string' ? job.date : job.date?.toDate().toISOString().split('T')[0] || '',
+          time: job.time || '',
+          status: job.status,
+          customerId: job.customerId,
+          customerName: job.customerName,
+          image: job.image,
+        }));
+
+        setAvailableJobs(tasks);
+      } catch (error) {
+        console.error('Failed to load jobs:', error);
+        setAvailableJobs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadJobs();
+  }, [workerSkills.join(',')]); // Reload when skills change
 
   // Filter jobs based on worker's registered skills
   let skillFilteredJobs = availableJobs.filter(job => 
@@ -106,7 +88,7 @@ export function AvailableJobs({ context }: { context: AppContextType }) {
             ) : (
               <View style={styles.avatar}>
                 <Text style={styles.avatarText}>
-                  {(worker?.name || 'Worker').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                  {(worker?.name || 'Worker').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                 </Text>
               </View>
             )}

@@ -162,7 +162,7 @@ export function CustomerMyJobs({ context }: { context: AppContextType }) {
                   <View style={styles.jobHeaderContent}>
                     <View style={styles.jobTitleRow}>
                       <Text style={styles.jobTitle}>{job.title}</Text>
-                      <View style={[styles.statusBadge, styles[`status${job.status.replace('-', '')}` as keyof typeof styles]]}>
+                      <View style={[styles.statusBadge, job.status === 'pending' ? styles.statuspending : job.status === 'in-progress' ? styles.statusinprogress : styles.statuscompleted]}>
                         <Text style={styles.statusText}>{job.status.replace('-', ' ').toUpperCase()}</Text>
                       </View>
                     </View>

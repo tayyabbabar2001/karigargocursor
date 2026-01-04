@@ -23,6 +23,7 @@ export function UserManagement({ context }: { context: AppContextType }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { backgroundColor: '#006600', padding: 24, paddingTop: 40, flexDirection: 'row', alignItems: 'center' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '500', marginLeft: 12 },
   content: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
   title: { fontSize: 24, fontWeight: '500', color: '#333', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#666' },

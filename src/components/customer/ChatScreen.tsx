@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, Modal, Alert } from 'react-native';
 import { AppContextType } from '../../types';
 import { Message } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
+import { subscribeToMessages, sendMessage, MessageData } from '../../services/firestoreService';
 
 interface ExtendedMessage extends Message {
   type?: 'text' | 'image' | 'video' | 'voice';
@@ -14,29 +15,45 @@ interface ExtendedMessage extends Message {
 
 export function ChatScreen({ context }: { context: AppContextType }) {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<ExtendedMessage[]>([
-    {
-      id: '1',
-      senderId: 'worker-1',
-      text: 'Hello! I can help you with this task. When would you like me to start?',
-      timestamp: '10:30 AM',
-      isCustomer: false,
-      type: 'text',
-    },
-    {
-      id: '2',
-      senderId: 'customer-1',
-      text: 'Hi! Can you come tomorrow morning?',
-      timestamp: '10:32 AM',
-      isCustomer: true,
-      type: 'text',
-    },
-  ]);
+  const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const messagesEndRef = useRef<ScrollView>(null);
+
+  const jobId = context.currentTask?.id;
+  const currentUserId = context.currentUser?.id;
+  const workerId = context.selectedWorker?.id || context.selectedBid?.workerId;
+
+  // Subscribe to real-time messages
+  useEffect(() => {
+    if (!jobId) return;
+
+    const unsubscribe = subscribeToMessages(jobId, (firestoreMessages: MessageData[]) => {
+      // Convert Firestore messages to ExtendedMessage format
+      const convertedMessages: ExtendedMessage[] = firestoreMessages.map((msg) => ({
+        id: msg.id,
+        senderId: msg.senderId,
+        text: msg.text,
+        timestamp: msg.createdAt 
+          ? new Date(msg.createdAt.seconds * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+          : msg.timestamp,
+        isCustomer: msg.isCustomer,
+        type: 'text' as const,
+      }));
+
+      setMessages(convertedMessages);
+      
+      // Scroll to bottom when new messages arrive
+      setTimeout(() => {
+        messagesEndRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    });
+
+    return () => unsubscribe();
+  }, [jobId]);
 
   const workerName = context.selectedWorker?.name || context.selectedBid?.workerName || 'Worker';
   const workerPhoto = context.selectedWorker?.profilePicture || 
@@ -45,18 +62,23 @@ export function ChatScreen({ context }: { context: AppContextType }) {
                       context.selectedBid?.workerProfilePicture ||
                       'https://api.dicebear.com/7.x/avataaars/svg?seed=' + workerName;
 
-  const handleSend = () => {
-    if (message.trim()) {
-      const newMessage: ExtendedMessage = {
-        id: `msg-${Date.now()}`,
-        senderId: context.currentUser?.id || 'customer-1',
+  const handleSend = async () => {
+    if (!message.trim() || !jobId || !currentUserId) return;
+
+    try {
+      // Send message to Firestore
+      await sendMessage({
+        jobId: jobId,
+        senderId: currentUserId,
         text: message,
         timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
         isCustomer: true,
-        type: 'text',
-      };
-      setMessages([...messages, newMessage]);
+      });
+
       setMessage('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      Alert.alert('Error', 'Failed to send message');
     }
   };
 

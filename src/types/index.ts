@@ -55,6 +55,7 @@ export interface Task {
   status: 'pending' | 'in-progress' | 'completed';
   customerId: string;
   customerName: string;
+  customerProfilePicture?: string;
   workerId?: string;
   workerName?: string;
   bids?: Bid[];
@@ -65,6 +66,7 @@ export interface Bid {
   workerId: string;
   workerName: string;
   workerPhoto: string;
+  workerProfilePicture?: string;
   skill: string;
   bidPrice: number;
   rating: number;
@@ -78,6 +80,7 @@ export interface Worker {
   id: string;
   name: string;
   photo: string;
+  profilePicture?: string;
   skills: string[];
   rating: number;
   totalJobs: number;

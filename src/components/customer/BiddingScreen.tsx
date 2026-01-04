@@ -1,12 +1,37 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppContextType } from '../../types';
+import { getBidsByJob, acceptBid } from '../../services/firestoreService';
 
 export function BiddingScreen({ context }: { context: AppContextType }) {
   const [sortBy, setSortBy] = useState('lowest-price');
+  const [bids, setBids] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const task = context.currentTask;
-  const bids = task?.bids || [];
+
+  // Load bids from Firestore
+  useEffect(() => {
+    const loadBids = async () => {
+      if (!task?.id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const firestoreBids = await getBidsByJob(task.id);
+        setBids(firestoreBids);
+      } catch (error) {
+        console.error('Failed to load bids:', error);
+        // Fallback to task bids if available
+        setBids(task.bids || []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBids();
+  }, [task?.id]);
 
   const sortedBids = [...bids].sort((a, b) => {
     if (sortBy === 'lowest-price') return a.bidPrice - b.bidPrice;
@@ -15,21 +40,30 @@ export function BiddingScreen({ context }: { context: AppContextType }) {
     return 0;
   });
 
-  const handleAcceptBid = (bid: any) => {
-    context.setSelectedBid(bid);
-    context.setSelectedWorker({
-      id: bid.workerId,
-      name: bid.workerName,
-      photo: bid.workerPhoto || bid.workerProfilePicture,
-      profilePicture: bid.workerProfilePicture || bid.workerPhoto,
-      skills: [bid.skill],
-      rating: bid.rating,
-      totalJobs: 45,
-      verified: bid.verified,
-      distance: bid.distance,
-      jobHistory: [],
-    });
-    context.setScreen('live-tracking');
+  const handleAcceptBid = async (bid: any) => {
+    if (!task?.id) return;
+
+    try {
+      // Accept bid in Firestore
+      await acceptBid(task.id, bid.id, bid.workerId);
+      
+      context.setSelectedBid(bid);
+      context.setSelectedWorker({
+        id: bid.workerId,
+        name: bid.workerName,
+        photo: bid.workerPhoto || bid.workerProfilePicture,
+        profilePicture: bid.workerProfilePicture || bid.workerPhoto,
+        skills: [bid.skill],
+        rating: bid.rating,
+        totalJobs: 45,
+        verified: bid.verified,
+        distance: bid.distance,
+        jobHistory: [],
+      });
+      context.setScreen('live-tracking');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to accept bid');
+    }
   };
 
   const handleViewProfile = (bid: any) => {

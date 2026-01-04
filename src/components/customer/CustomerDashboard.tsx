@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { AppContextType } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
+import { getJobsByCustomer } from '../../services/firestoreService';
 
 const categories = [
   { name: 'Electrician', color: '#FFB800', icon: '⚡' },
@@ -25,14 +26,56 @@ interface Job {
 export function CustomerDashboard({ context }: { context: AppContextType }) {
   const [activeTab, setActiveTab] = useState('home');
   const categoryScrollRef = useRef<ScrollView>(null);
-  const [ongoingJobs, setOngoingJobs] = useState<Job[]>([
-    { id: '1', title: 'Fix Kitchen Sink', worker: 'Ali Khan', status: 'In Progress', category: 'Plumber' },
-    { id: '2', title: 'Electrical Wiring', worker: 'Bilal Ahmed', status: 'Bidding', category: 'Electrician' },
-  ]);
-  const [completedJobs, setCompletedJobs] = useState<Job[]>([
-    { id: '3', title: 'Paint Living Room', worker: 'Farhan Malik', status: 'Completed', category: 'Painter', rating: 5, date: '2 days ago' },
-    { id: '4', title: 'Repair Furniture', worker: 'Kamran Ali', status: 'Completed', category: 'Carpenter', rating: 4, date: '1 week ago' },
-  ]);
+  const [ongoingJobs, setOngoingJobs] = useState<Job[]>([]);
+  const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load jobs from Firestore
+  useEffect(() => {
+    const loadJobs = async () => {
+      if (!context.currentUser?.id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const jobs = await getJobsByCustomer(context.currentUser.id);
+        
+        // Separate into ongoing and completed
+        const ongoing = jobs
+          .filter(job => job.status === 'pending' || job.status === 'in-progress')
+          .map(job => ({
+            id: job.id,
+            title: job.title,
+            worker: job.workerName || 'No worker assigned',
+            status: job.status === 'in-progress' ? 'In Progress' as const : 'Bidding' as const,
+            category: job.category,
+          }));
+
+        const completed = jobs
+          .filter(job => job.status === 'completed')
+          .map(job => ({
+            id: job.id,
+            title: job.title,
+            worker: job.workerName || 'Unknown',
+            status: 'Completed' as const,
+            category: job.category,
+            rating: 5, // Default rating, can be loaded from reviews
+            date: 'Recently', // Can calculate from timestamp
+          }));
+
+        setOngoingJobs(ongoing);
+        setCompletedJobs(completed);
+      } catch (error) {
+        console.error('Failed to load jobs:', error);
+        // Keep empty arrays on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadJobs();
+  }, [context.currentUser?.id]);
 
   // Move job from ongoing to completed when marked complete
   useEffect(() => {

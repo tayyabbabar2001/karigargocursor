@@ -1,21 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { AppContextType } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
+import { createBid } from '../../services/firestoreService';
 
 export function BidSubmission({ context }: { context: AppContextType }) {
   const [bidAmount, setBidAmount] = useState('');
   const [completionTime, setCompletionTime] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const job = context.currentTask;
+  const worker = context.currentUser;
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-    setTimeout(() => {
-      context.setScreen('ongoing-jobs');
-    }, 2000);
+  const handleSubmit = async () => {
+    if (!bidAmount || !completionTime || !job || !worker) {
+      Alert.alert('Error', 'Please fill all required fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Create bid in Firestore
+      await createBid({
+        jobId: job.id,
+        workerId: worker.id,
+        workerName: worker.name || 'Worker',
+        workerPhoto: worker.profilePicture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + worker.name,
+        workerProfilePicture: worker.profilePicture,
+        skill: job.category,
+        bidPrice: parseFloat(bidAmount),
+        rating: 4.5, // Default rating, can be loaded from worker profile
+        distance: '2.5 km', // Can be calculated from location
+        verified: false, // Can be loaded from worker profile
+        completionTime: completionTime,
+        message: message || undefined,
+      });
+
+      setSubmitted(true);
+      setTimeout(() => {
+        context.setScreen('ongoing-jobs');
+      }, 2000);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to submit bid');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
